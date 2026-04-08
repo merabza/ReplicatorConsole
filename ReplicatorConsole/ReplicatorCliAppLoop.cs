@@ -51,11 +51,6 @@ public sealed class ReplicatorCliAppLoop : CliAppLoop
         }
 
 
-        //სამუშაოების დროის დაგეგმვების სია
-        var jobSchedulesCommand = new CruderListCliMenuCommand(new JobScheduleCruder(_appName, _logger,
-            _httpClientFactory, _parametersManager, parameters.JobSchedules, _processes));
-        mainMenuSet.AddMenuItem(jobSchedulesCommand);
-
         //მონაცემთა ბაზების ბექაპირების ნაბიჯების სია
         var databaseBackupStepCommand = new CruderListCliMenuCommand(new DatabaseBackupStepCruder(_appName, _logger,
             _httpClientFactory, _processes, _parametersManager, parameters.DatabaseBackupSteps));

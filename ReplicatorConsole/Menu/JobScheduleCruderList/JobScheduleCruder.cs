@@ -9,7 +9,7 @@ using ReplicatorShared.Data.Models;
 using SystemTools.BackgroundTasks;
 using SystemTools.SystemToolsShared;
 
-namespace ReplicatorConsole.Cruders;
+namespace ReplicatorConsole.Menu.JobScheduleCruderList;
 
 public sealed class JobScheduleCruder : ParCruder<JobSchedule>
 {

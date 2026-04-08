@@ -1,4 +1,4 @@
-﻿using ReplicatorConsole.Cruders;
+﻿using ReplicatorConsole.Menu.JobScheduleCruderList;
 using ReplicatorConsole.Menu.ReplicatorParametersEdit;
 using ReplicatorConsole.Menu.SaveReplicatorParametersForLocalReplicatorService;
 

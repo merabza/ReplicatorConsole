@@ -5,7 +5,7 @@ using SystemTools.SystemToolsShared;
 
 namespace ReplicatorConsole;
 
-public class MenuCommandFactory
+public static class MenuCommandFactory
 {
     public static CliMenuCommand? CreateMenuCommand(string menuCommandName, ServiceProvider serviceProvider,
         IParametersManager parametersManager)
