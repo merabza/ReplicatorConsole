@@ -1,4 +1,6 @@
-﻿namespace ReplicatorConsole;
+﻿using SystemTools.SystemToolsShared;
+
+namespace ReplicatorConsole;
 
 public class ReplicatorApplication : IApplication
 {
