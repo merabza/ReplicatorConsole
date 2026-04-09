@@ -77,10 +77,6 @@ try
         return 6;
     }
 
-    // ReSharper disable once DisposableConstructor
-    // ReSharper disable once using
-    //using var processes = new Processes(processesLogger);
-
     var replicator = new ReplicatorCliAppLoop(serviceProvider, appName, logger, httpClientFactory,
         new ParametersManager(parametersFileName, par), processes);
     return await replicator.Run() ? 0 : 1;
