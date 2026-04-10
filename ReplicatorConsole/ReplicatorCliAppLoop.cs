@@ -6,7 +6,6 @@ using AppCliTools.LibDataInput;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ParametersManagement.LibParameters;
-using ReplicatorConsole.Cruders;
 using ReplicatorConsole.Menu;
 using ReplicatorConsole.MenuCommands;
 using ReplicatorConsole.StepCruders;
@@ -41,15 +40,8 @@ public sealed class ReplicatorCliAppLoop : CliAppLoop
     {
         var parameters = (ReplicatorParameters)_parametersManager.Parameters;
 
-        var mainMenuSet = new CliMenuSet("Main Menu");
-
-        foreach (string menuCommandName in MenuData.MenuCommandNames)
-        {
-            CliMenuCommand? menuCommand =
-                MenuCommandFactory.CreateMenuCommand(menuCommandName, _serviceProvider, _parametersManager);
-            mainMenuSet.AddMenuItem(menuCommand!);
-        }
-
+        CliMenuSet mainMenuSet = CliMenuSetFactory.CreateMenuSet("Main Menu", MenuData.MenuCommandNames,
+            _serviceProvider, _parametersManager);
 
         //მონაცემთა ბაზების ბექაპირების ნაბიჯების სია
         var databaseBackupStepCommand = new CruderListCliMenuCommand(new DatabaseBackupStepCruder(_appName, _logger,

@@ -63,9 +63,9 @@ public /*open*/ class StepCruder<TStep> : ParCruder<TStep> where TStep : JobStep
         //if (parameters == null)
         //    return;
 
-        var scheduleNamesList = parameters.JobsBySchedules.Where(w => w.JobStepName == itemName)
+        List<string> scheduleNamesList = parameters.JobsBySchedules.Where(w => w.JobStepName == itemName)
             .Select(s => s.ScheduleName).ToList();
-        foreach (var kvp in parameters.JobSchedules)
+        foreach (KeyValuePair<string, JobSchedule> kvp in parameters.JobSchedules)
         {
             itemSubMenuSet.AddMenuItem(new SelectScheduleNamesCommand(ParametersManager, itemName, kvp.Key,
                 scheduleNamesList.Contains(kvp.Key)));
@@ -75,7 +75,7 @@ public /*open*/ class StepCruder<TStep> : ParCruder<TStep> where TStep : JobStep
     public override bool ContainsRecordWithKey(string recordKey)
     {
         var parameters = (ReplicatorParameters)ParametersManager.Parameters;
-        var steps = parameters.GetSteps();
+        Dictionary<string, JobStep> steps = parameters.GetSteps();
         return steps.ContainsKey(recordKey);
     }
 }

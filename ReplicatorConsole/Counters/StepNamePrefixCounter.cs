@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DatabaseTools.DbTools.Models;
+using Microsoft.Extensions.Logging;
+using OneOf;
 using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibParameters;
 using SystemTools.SystemToolsShared.Errors;
@@ -27,16 +29,16 @@ public sealed class StepNamePrefixCounter
     {
         var parameters = (IParametersWithDatabaseServerConnections)_parametersManager.Parameters;
 
-        var createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_appName, _logger, true,
-            _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
-            CancellationToken.None).Result;
+        OneOf<IDatabaseManager, Error[]> createDatabaseManagerResult = DatabaseManagersFactory
+            .CreateDatabaseManager(_appName, _logger, true, _databaseServerConnectionName,
+                new DatabaseServerConnections(parameters.DatabaseServerConnections), CancellationToken.None).Result;
 
         if (createDatabaseManagerResult.IsT1)
         {
             Error.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
         }
 
-        var getDatabaseServerInfoResult =
+        OneOf<DbServerInfo, Error[]> getDatabaseServerInfoResult =
             createDatabaseManagerResult.AsT0.GetDatabaseServerInfo(CancellationToken.None).Result;
         if (getDatabaseServerInfoResult.IsT0)
         {
