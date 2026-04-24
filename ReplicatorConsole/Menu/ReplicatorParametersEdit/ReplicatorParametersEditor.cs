@@ -15,7 +15,7 @@ namespace ReplicatorConsole.Menu.ReplicatorParametersEdit;
 public sealed class ReplicatorParametersEditor : ParametersEditor
 {
     public ReplicatorParametersEditor(ILogger logger, IHttpClientFactory httpClientFactory, IParameters parameters,
-        IParametersManager parametersManager) : base(MenuCommandName, parameters, parametersManager)
+        IParametersManager parametersManager) : base("Replicator Parameters Editor", parameters, parametersManager)
     {
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ReplicatorParameters.LogFolder)));
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ReplicatorParameters.WorkFolder)));
@@ -67,6 +67,4 @@ public sealed class ReplicatorParametersEditor : ParametersEditor
         FieldEditors.Add(new DictionaryFieldEditor<ArchiverCruder, ArchiverData>(nameof(ReplicatorParameters.Archivers),
             parametersManager));
     }
-
-    public static string MenuCommandName => "Replicator Parameters Editor";
 }

@@ -21,7 +21,7 @@ public sealed class JobScheduleCruder : ParCruder<JobSchedule>
 
     public JobScheduleCruder(string appName, ILogger logger, IHttpClientFactory httpClientFactory,
         IParametersManager parametersManager, Dictionary<string, JobSchedule> currentValuesDictionary,
-        IProcesses processes) : base(parametersManager, currentValuesDictionary, "Job Schedule", MenuCommandName)
+        IProcesses processes) : base(parametersManager, currentValuesDictionary, "Job Schedule", "Job Schedules")
     {
         _parametersFileName = parametersManager.ParametersFileName;
         _appName = appName;
@@ -41,8 +41,6 @@ public sealed class JobScheduleCruder : ParCruder<JobSchedule>
         FieldEditors.Add(new DateFieldEditor(nameof(JobSchedule.DurationStartDate), DateTime.Today));
         FieldEditors.Add(new DateFieldEditor(nameof(JobSchedule.DurationEndDate), DateTime.MaxValue.Date));
     }
-
-    public static string MenuCommandName => "Job Schedules";
 
     protected override void CheckFieldsEnables(ItemData itemData, string? lastEditedFieldName = null)
     {

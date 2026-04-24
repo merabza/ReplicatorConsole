@@ -10,22 +10,22 @@ public class ParametersEditorListCliMenuCommandFactoryStrategy : IMenuCommandFac
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<ParametersEditorListCliMenuCommandFactoryStrategy> _logger;
+    private readonly IParametersManager _parametersManager;
 
     public ParametersEditorListCliMenuCommandFactoryStrategy(
-        ILogger<ParametersEditorListCliMenuCommandFactoryStrategy> logger, IHttpClientFactory httpClientFactory)
+        ILogger<ParametersEditorListCliMenuCommandFactoryStrategy> logger, IHttpClientFactory httpClientFactory, IParametersManager parametersManager)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
+        _parametersManager = parametersManager;
     }
 
-    public string MenuCommandName => ReplicatorParametersEditor.MenuCommandName;
-
-    public CliMenuCommand CreateMenuCommand(IParametersManager parametersManager)
+    public CliMenuCommand CreateMenuCommand()
     {
-        var parameters = (ReplicatorParameters)parametersManager.Parameters;
+        var parameters = (ReplicatorParameters)_parametersManager.Parameters;
 
         var replicatorParametersEditor =
-            new ReplicatorParametersEditor(_logger, _httpClientFactory, parameters, parametersManager);
+            new ReplicatorParametersEditor(_logger, _httpClientFactory, parameters, _parametersManager);
         return new ParametersEditorListCliMenuCommand(replicatorParametersEditor);
     }
 }

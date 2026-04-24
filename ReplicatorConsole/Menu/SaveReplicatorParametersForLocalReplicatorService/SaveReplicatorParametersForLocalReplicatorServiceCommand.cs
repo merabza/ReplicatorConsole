@@ -12,12 +12,10 @@ public sealed class SaveReplicatorParametersForLocalReplicatorServiceCommand : C
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public SaveReplicatorParametersForLocalReplicatorServiceCommand(IParametersManager parametersManager) : base(
-        MenuCommandName, EMenuAction.Reload)
+        "Save Replicator Parameters For Local Replicator Service", EMenuAction.Reload)
     {
         _parametersManager = parametersManager;
     }
-
-    public static string MenuCommandName => "Save Replicator Parameters For Local Replicator Service";
 
     protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {

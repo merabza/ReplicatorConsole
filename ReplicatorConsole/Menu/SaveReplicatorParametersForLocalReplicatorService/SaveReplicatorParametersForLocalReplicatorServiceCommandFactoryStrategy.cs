@@ -5,10 +5,15 @@ namespace ReplicatorConsole.Menu.SaveReplicatorParametersForLocalReplicatorServi
 
 public class SaveReplicatorParametersForLocalReplicatorServiceCommandFactoryStrategy : IMenuCommandFactoryStrategy
 {
-    public string MenuCommandName => SaveReplicatorParametersForLocalReplicatorServiceCommand.MenuCommandName;
+    private readonly IParametersManager _parametersManager;
 
-    public CliMenuCommand CreateMenuCommand(IParametersManager parametersManager)
+    public SaveReplicatorParametersForLocalReplicatorServiceCommandFactoryStrategy(IParametersManager parametersManager)
     {
-        return new SaveReplicatorParametersForLocalReplicatorServiceCommand(parametersManager);
+        _parametersManager = parametersManager;
+    }
+
+    public CliMenuCommand CreateMenuCommand()
+    {
+        return new SaveReplicatorParametersForLocalReplicatorServiceCommand(_parametersManager);
     }
 }

@@ -1,12 +1,12 @@
-﻿using AppCliTools.CliParameters;
+﻿using System;
+using System.Runtime.CompilerServices;
+using AppCliTools.CliParameters;
+using AppCliTools.CliTools;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ParametersManagement.LibParameters;
-using ReplicatorConsole;
+using ReplicatorConsole.DependencyInjection;
 using ReplicatorShared.Data.Models;
 using Serilog;
-using Serilog.Events;
-using SystemTools.BackgroundTasks;
 using SystemTools.SystemToolsShared;
 
 ILogger<Program>? logger = null;
@@ -16,75 +16,40 @@ try
 
     const string appName = "Replicator Console";
 
-    ////პროგრამის ატრიბუტების დაყენება 
-    //ProgramAttributes.Instance.AppName = appName;
+    var argParser = new ArgumentsParser<ReplicatorParameters>(args, appName);
 
-    //string key = StringExtension.AppAgentAppKey + Environment.MachineName.Capitalize();
-
-    var argParser = new ArgumentsParser<ReplicatorParameters>(args, appName, null);
-    EParseResult parseResult = argParser.Analysis();
-
-    if (parseResult != EParseResult.Ok)
+    switch (argParser.Analysis())
     {
-        return 1;
+        case EParseResult.Ok:
+            break;
+        case EParseResult.Usage:
+            return 1;
+        case EParseResult.Error:
+            return 2;
+        default:
+            throw new SwitchExpressionException();
     }
 
-    var par = (ReplicatorParameters?)argParser.Par;
-    if (par is null)
-    {
-        StShared.WriteErrorLine("ReplicatorParameters is null", true);
-        return 3;
-    }
-
-    string? parametersFileName = argParser.ParametersFileName;
-    var replicatorServicesCreator = new ReplicatorServicesCreator(par);
+    var serviceCollection = new ServiceCollection();
 
     // ReSharper disable once using
-    await using ServiceProvider? serviceProvider =
-        replicatorServicesCreator.CreateServiceProvider(LogEventLevel.Information);
+    await using ServiceProvider serviceProvider = serviceCollection
+        .AddServices(appName, argParser.Par!, argParser.ParametersFileName!).BuildServiceProvider();
 
-    if (serviceProvider == null)
+    (CliAppLoopParameters? cliLoopPar, logger) = CliAppLoopParameters.Create<Program>(serviceProvider);
+    if (cliLoopPar is null)
     {
-        Console.WriteLine("Logger not created");
-        return 8;
-    }
-
-    logger = serviceProvider.GetService<ILogger<Program>>();
-    if (logger is null)
-    {
-        StShared.WriteErrorLine("logger is null", true);
         return 3;
     }
 
-    var processesLogger = serviceProvider.GetService<ILogger<Processes>>();
-    if (processesLogger is null)
-    {
-        StShared.WriteErrorLine("processesLogger is null", true);
-        return 3;
-    }
+    var cliAppLoop = new CliAppLoop(cliLoopPar);
 
-    var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>();
-    if (httpClientFactory is null)
-    {
-        StShared.WriteErrorLine("httpClientFactory is null", true);
-        return 6;
-    }
-
-    var processes = serviceProvider.GetService<IProcesses>();
-    if (processes is null)
-    {
-        StShared.WriteErrorLine("processes is null", true);
-        return 6;
-    }
-
-    var replicator = new ReplicatorCliAppLoop(serviceProvider, appName, logger, httpClientFactory,
-        new ParametersManager(parametersFileName, par), processes);
-    return await replicator.Run() ? 0 : 1;
+    return await cliAppLoop.Run() ? 0 : 100;
 }
 catch (Exception e)
 {
     StShared.WriteException(e, true, logger);
-    return 7;
+    return 4;
 }
 finally
 {

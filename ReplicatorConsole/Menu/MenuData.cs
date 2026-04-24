@@ -6,13 +6,13 @@ namespace ReplicatorConsole.Menu;
 
 public static class MenuData
 {
-    public static List<string> MenuCommandNames { get; } =
+    public static List<string> MainMenuCommandFactoryStrategyNames { get; } =
     [
         //ძირითადი პარამეტრების რედაქტირება
-        ReplicatorParametersEditor.MenuCommandName,
+        nameof(ParametersEditorListCliMenuCommandFactoryStrategy),
         //პარამეტრების ფაილის შენახვა ლოკალური სერვისისთვის
-        SaveReplicatorParametersForLocalReplicatorServiceCommand.MenuCommandName,
+        nameof(SaveReplicatorParametersForLocalReplicatorServiceCommandFactoryStrategy),
         //სამუშაოების დროის დაგეგმვების სია
-        JobScheduleCruder.MenuCommandName
+        nameof(JobScheduleCruderListCliMenuCommandFactoryStrategy)
     ];
 }

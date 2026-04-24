@@ -14,24 +14,24 @@ public class JobScheduleCruderListCliMenuCommandFactoryStrategy : IMenuCommandFa
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<JobScheduleCruderListCliMenuCommandFactoryStrategy> _logger;
     private readonly IProcesses _processes;
+    private readonly IParametersManager _parametersManager;
 
     public JobScheduleCruderListCliMenuCommandFactoryStrategy(
         ILogger<JobScheduleCruderListCliMenuCommandFactoryStrategy> logger, IHttpClientFactory httpClientFactory,
-        IApplication application, IProcesses processes)
+        IApplication application, IProcesses processes, IParametersManager parametersManager)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _application = application;
         _processes = processes;
+        _parametersManager = parametersManager;
     }
 
-    public string MenuCommandName => JobScheduleCruder.MenuCommandName;
-
-    public CliMenuCommand CreateMenuCommand(IParametersManager parametersManager)
+    public CliMenuCommand CreateMenuCommand()
     {
-        var parameters = (ReplicatorParameters)parametersManager.Parameters;
+        var parameters = (ReplicatorParameters)_parametersManager.Parameters;
 
-        return new CruderListCliMenuCommand(new JobScheduleCruder(_application.Name, _logger, _httpClientFactory,
-            parametersManager, parameters.JobSchedules, _processes));
+        return new CruderListCliMenuCommand(new JobScheduleCruder(_application.AppName, _logger, _httpClientFactory,
+            _parametersManager, parameters.JobSchedules, _processes));
     }
 }
