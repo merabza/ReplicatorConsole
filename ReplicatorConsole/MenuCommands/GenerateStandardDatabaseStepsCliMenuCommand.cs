@@ -1,4 +1,6 @@
-﻿using AppCliTools.CliMenu;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using AppCliTools.CliMenu;
 using AppCliTools.CliParametersDataEdit.Cruders;
 using Microsoft.Extensions.Logging;
 using ParametersManagement.LibParameters;
@@ -8,14 +10,14 @@ using SystemTools.SystemToolsShared;
 
 namespace ReplicatorConsole.MenuCommands;
 
-public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
+public sealed class GenerateStandardDatabaseStepsCliMenuCommand : CliMenuCommand
 {
     private readonly string _appName;
     private readonly ILogger _logger;
     private readonly ParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public GenerateStandardDatabaseStepsCommand(string appName, ILogger logger, ParametersManager parametersManager) :
+    public GenerateStandardDatabaseStepsCliMenuCommand(string appName, ILogger logger, ParametersManager parametersManager) :
         base("Generate Standard Database Jobs...", EMenuAction.Reload)
     {
         _appName = appName;

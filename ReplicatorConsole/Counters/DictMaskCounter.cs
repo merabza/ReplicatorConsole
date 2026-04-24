@@ -1,4 +1,6 @@
-﻿namespace ReplicatorConsole.Counters;
+﻿using System.Collections.Generic;
+
+namespace ReplicatorConsole.Counters;
 
 public sealed class DictMaskCounter : MaskCounter
 {

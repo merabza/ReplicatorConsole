@@ -1,4 +1,5 @@
 //using AppCliTools.CliMenu;
+//using AppCliTools.CliMenu.CliMenuCommands;
 //using AppCliTools.CliParameters.CliMenuCommands;
 //using AppCliTools.CliTools;
 //using AppCliTools.CliTools.CliMenuCommands;
@@ -84,17 +85,17 @@
 //        mainMenuSet.AddMenuItem(unZipOnPlaceStepCommand);
 
 //        //ნაბიჯების გასუფთავება
-//        var generateStandardDatabaseStepsCommand =
-//            new GenerateStandardDatabaseStepsCommand(_appName, _logger, _parametersManager);
-//        mainMenuSet.AddMenuItem(generateStandardDatabaseStepsCommand);
+//        var generateStandardDatabaseStepsCliMenuCommand =
+//            new GenerateStandardDatabaseStepsCliMenuCommand(_appName, _logger, _parametersManager);
+//        mainMenuSet.AddMenuItem(generateStandardDatabaseStepsCliMenuCommand);
 
 //        //ნაბიჯების გასუფთავება
-//        var clearStepsCommand = new ClearStepsCommand(_parametersManager);
-//        mainMenuSet.AddMenuItem(clearStepsCommand);
+//        var clearStepsCliMenuCommand = new ClearStepsCliMenuCommand(_parametersManager);
+//        mainMenuSet.AddMenuItem(clearStepsCliMenuCommand);
 
 //        //მთლიანი ფაილის გასუფთავება
-//        var clearAllCommand = new ClearAllCommand(_parametersManager);
-//        mainMenuSet.AddMenuItem(clearAllCommand);
+//        var clearAllCliMenuCommand = new ClearAllCliMenuCommand(_parametersManager);
+//        mainMenuSet.AddMenuItem(clearAllCliMenuCommand);
 
 //        //გასასვლელი
 //        string key = ConsoleKey.Escape.Value().ToUpperInvariant();

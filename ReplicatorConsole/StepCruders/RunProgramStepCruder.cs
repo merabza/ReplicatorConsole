@@ -1,4 +1,6 @@
-﻿using AppCliTools.CliParameters.FieldEditors;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using AppCliTools.CliParameters.FieldEditors;
 using Microsoft.Extensions.Logging;
 using ParametersManagement.LibParameters;
 using ReplicatorShared.Data.Steps;
@@ -9,7 +11,7 @@ namespace ReplicatorConsole.StepCruders;
 public sealed class RunProgramStepCruder : StepCruder<RunProgramStep>
 {
     public RunProgramStepCruder(string appName, ILogger logger, IHttpClientFactory httpClientFactory,
-        IProcesses processes, ParametersManager parametersManager,
+        IProcesses processes, IParametersManager parametersManager,
         Dictionary<string, RunProgramStep> currentValuesDictionary) : base(appName, logger, httpClientFactory,
         processes, parametersManager, currentValuesDictionary, "Run Program Step", "Run Program Steps")
     {

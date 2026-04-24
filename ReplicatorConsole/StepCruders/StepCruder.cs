@@ -1,4 +1,8 @@
-﻿using AppCliTools.CliMenu;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using AppCliTools.CliMenu;
 using AppCliTools.CliParameters;
 using AppCliTools.CliParameters.FieldEditors;
 using Microsoft.Extensions.Logging;
@@ -21,7 +25,7 @@ public /*open*/ class StepCruder<TStep> : ParCruder<TStep> where TStep : JobStep
     private readonly IProcesses _processes;
 
     protected StepCruder(string appName, ILogger logger, IHttpClientFactory httpClientFactory, IProcesses processes,
-        ParametersManager parametersManager, Dictionary<string, TStep> currentValuesDictionary, string crudName,
+        IParametersManager parametersManager, Dictionary<string, TStep> currentValuesDictionary, string crudName,
         string crudNamePlural) : base(parametersManager, currentValuesDictionary, crudName, crudNamePlural)
     {
         _parametersFileName = parametersManager.ParametersFileName;

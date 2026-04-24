@@ -1,4 +1,6 @@
-﻿using AppCliTools.CliParameters.FieldEditors;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using AppCliTools.CliParameters.FieldEditors;
 using AppCliTools.CliParametersApiClientsEdit.FieldEditors;
 using AppCliTools.CliParametersDataEdit.FieldEditors;
 using Microsoft.Extensions.Logging;
@@ -12,7 +14,7 @@ namespace ReplicatorConsole.StepCruders;
 public sealed class ExecuteSqlCommandStepCruder : StepCruder<ExecuteSqlCommandStep>
 {
     public ExecuteSqlCommandStepCruder(string appName, ILogger logger, IHttpClientFactory httpClientFactory,
-        IProcesses processes, ParametersManager parametersManager,
+        IProcesses processes, IParametersManager parametersManager,
         Dictionary<string, ExecuteSqlCommandStep> currentValuesDictionary) : base(appName, logger, httpClientFactory,
         processes, parametersManager, currentValuesDictionary, "Execute SQL Command Step", "Execute SQL Command Steps")
     {

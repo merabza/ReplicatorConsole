@@ -1,4 +1,5 @@
-﻿using ParametersManagement.LibParameters;
+﻿using System;
+using ParametersManagement.LibParameters;
 
 namespace ReplicatorConsole.Counters;
 

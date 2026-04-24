@@ -1,4 +1,6 @@
-﻿using AppCliTools.CliParameters.FieldEditors;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using AppCliTools.CliParameters.FieldEditors;
 using Microsoft.Extensions.Logging;
 using ParametersManagement.LibParameters;
 using ReplicatorShared.Data.Steps;
@@ -9,7 +11,7 @@ namespace ReplicatorConsole.StepCruders;
 public sealed class UnZipOnPlaceStepCruder : StepCruder<UnZipOnPlaceStep>
 {
     public UnZipOnPlaceStepCruder(string appName, ILogger logger, IHttpClientFactory httpClientFactory,
-        IProcesses processes, ParametersManager parametersManager,
+        IProcesses processes, IParametersManager parametersManager,
         Dictionary<string, UnZipOnPlaceStep> currentValuesDictionary) : base(appName, logger, httpClientFactory,
         processes, parametersManager, currentValuesDictionary, "Unzip On Place Step", "Unzip On Place Steps")
     {

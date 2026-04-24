@@ -1,4 +1,5 @@
-﻿using AppCliTools.CliMenu;
+﻿using System;
+using AppCliTools.CliMenu;
 using AppCliTools.CliMenu.DependencyInjection;
 using AppCliTools.CliTools.App;
 using AppCliTools.CliTools.DependencyInjection;

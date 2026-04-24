@@ -1,4 +1,6 @@
-﻿namespace ReplicatorConsole.Counters;
+﻿using System.IO;
+
+namespace ReplicatorConsole.Counters;
 
 public /*open*/ class MaskCounter
 {

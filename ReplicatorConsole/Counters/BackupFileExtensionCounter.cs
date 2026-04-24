@@ -1,4 +1,5 @@
-﻿using DatabaseTools.DbTools;
+﻿using System;
+using DatabaseTools.DbTools;
 
 namespace ReplicatorConsole.Counters;
 

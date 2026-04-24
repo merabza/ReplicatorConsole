@@ -1,4 +1,7 @@
-﻿using AppCliTools.CliMenu;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using AppCliTools.CliMenu;
 using AppCliTools.CliParameters;
 using AppCliTools.CliParameters.FieldEditors;
 using Microsoft.Extensions.Logging;

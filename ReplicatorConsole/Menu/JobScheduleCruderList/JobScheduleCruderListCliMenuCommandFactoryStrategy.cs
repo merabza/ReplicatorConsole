@@ -1,4 +1,5 @@
-﻿using AppCliTools.CliMenu;
+﻿using System.Net.Http;
+using AppCliTools.CliMenu;
 using AppCliTools.CliParameters.CliMenuCommands;
 using Microsoft.Extensions.Logging;
 using ParametersManagement.LibParameters;

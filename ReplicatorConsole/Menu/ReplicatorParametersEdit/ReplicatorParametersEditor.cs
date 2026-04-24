@@ -1,4 +1,5 @@
-﻿using AppCliTools.CliParameters;
+﻿using System.Net.Http;
+using AppCliTools.CliParameters;
 using AppCliTools.CliParameters.FieldEditors;
 using AppCliTools.CliParametersDataEdit.Cruders;
 using AppCliTools.CliParametersEdit.Cruders;

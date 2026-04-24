@@ -1,4 +1,6 @@
-﻿using AppCliTools.CliParameters.FieldEditors;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using AppCliTools.CliParameters.FieldEditors;
 using AppCliTools.CliParametersApiClientsEdit.FieldEditors;
 using AppCliTools.CliParametersDataEdit.FieldEditors;
 using Microsoft.Extensions.Logging;
@@ -13,7 +15,7 @@ namespace ReplicatorConsole.StepCruders;
 public sealed class MultiDatabaseProcessStepCruder : StepCruder<MultiDatabaseProcessStep>
 {
     public MultiDatabaseProcessStepCruder(string appName, ILogger logger, IHttpClientFactory httpClientFactory,
-        IProcesses processes, ParametersManager parametersManager,
+        IProcesses processes, IParametersManager parametersManager,
         Dictionary<string, MultiDatabaseProcessStep> currentValuesDictionary) : base(appName, logger, httpClientFactory,
         processes, parametersManager, currentValuesDictionary, "Multi Database process Step",
         "Multi Database process Steps")

@@ -1,4 +1,6 @@
-﻿using AppCliTools.CliParameters.FieldEditors;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using AppCliTools.CliParameters.FieldEditors;
 using AppCliTools.CliParametersEdit.FieldEditors;
 using AppCliTools.CliParametersExcludeSetsEdit.FieldEditors;
 using Microsoft.Extensions.Logging;
@@ -12,7 +14,7 @@ namespace ReplicatorConsole.StepCruders;
 public sealed class FilesMoveStepCruder : StepCruder<FilesMoveStep>
 {
     public FilesMoveStepCruder(string appName, ILogger logger, IHttpClientFactory httpClientFactory,
-        IProcesses processes, ParametersManager parametersManager,
+        IProcesses processes, IParametersManager parametersManager,
         Dictionary<string, FilesMoveStep> currentValuesDictionary) : base(appName, logger, httpClientFactory, processes,
         parametersManager, currentValuesDictionary, "Files Move Step", "Files Move Steps")
     {

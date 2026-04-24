@@ -1,4 +1,5 @@
-﻿using AppCliTools.CliMenu;
+﻿using System;
+using AppCliTools.CliMenu;
 using AppCliTools.CliTools.Services.MenuBuilder;
 using ReplicatorConsole.Menu;
 
