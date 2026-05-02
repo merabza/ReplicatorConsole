@@ -9,15 +9,16 @@ using ReplicatorConsole.FieldEditors;
 using ReplicatorShared.Data.Models;
 using ReplicatorShared.Data.Steps;
 using SystemTools.BackgroundTasks;
+using SystemTools.SystemToolsShared;
 
 namespace ReplicatorConsole.StepCruders;
 
 public sealed class MultiDatabaseProcessStepCruder : StepCruder<MultiDatabaseProcessStep>
 {
-    public MultiDatabaseProcessStepCruder(string appName, ILogger logger, IHttpClientFactory httpClientFactory,
-        IProcesses processes, IParametersManager parametersManager,
-        Dictionary<string, MultiDatabaseProcessStep> currentValuesDictionary) : base(appName, logger, httpClientFactory,
-        processes, parametersManager, currentValuesDictionary, "Multi Database process Step",
+    public MultiDatabaseProcessStepCruder(IApplication application, ILogger logger,
+        IHttpClientFactory httpClientFactory, IProcesses processes, IParametersManager parametersManager,
+        Dictionary<string, MultiDatabaseProcessStep> currentValuesDictionary) : base(application.AppName, logger,
+        httpClientFactory, processes, parametersManager, currentValuesDictionary, "Multi Database process Step",
         "Multi Database process Steps")
     {
         List<FieldEditor> tempFieldEditors = [.. FieldEditors];
@@ -27,7 +28,7 @@ public sealed class MultiDatabaseProcessStepCruder : StepCruder<MultiDatabasePro
             EMultiDatabaseActionType.CheckRepairDataBase));
 
         //public string DatabaseServerConnectionName { get; set; }
-        FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(appName, logger, httpClientFactory,
+        FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(application, logger, httpClientFactory,
             nameof(MultiDatabaseProcessStep.DatabaseServerConnectionName), ParametersManager, true));
         //public string DatabaseWebAgentName { get; set; }
         FieldEditors.Add(new ApiClientNameFieldEditor(nameof(MultiDatabaseProcessStep.DatabaseWebAgentName), logger,
@@ -35,7 +36,7 @@ public sealed class MultiDatabaseProcessStepCruder : StepCruder<MultiDatabasePro
 
         FieldEditors.Add(new EnumFieldEditor<EDatabaseSet>(nameof(MultiDatabaseProcessStep.DatabaseSet),
             EDatabaseSet.AllDatabases));
-        FieldEditors.Add(new DatabaseNamesFieldEditor(appName, logger, httpClientFactory,
+        FieldEditors.Add(new DatabaseNamesFieldEditor(application.AppName, logger, httpClientFactory,
             nameof(MultiDatabaseProcessStep.DatabaseNames), ParametersManager,
             nameof(MultiDatabaseProcessStep.DatabaseServerConnectionName),
             nameof(MultiDatabaseProcessStep.DatabaseSet)));

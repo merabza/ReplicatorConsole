@@ -4,29 +4,33 @@ using AppCliTools.CliParameters.CliMenuCommands;
 using Microsoft.Extensions.Logging;
 using ParametersManagement.LibParameters;
 using ReplicatorShared.Data.Models;
+using SystemTools.SystemToolsShared;
 
 namespace ReplicatorConsole.Menu.ReplicatorParametersEdit;
 
 public class ParametersEditorListCliMenuCommandFactoryStrategy : IMenuCommandFactoryStrategy
 {
+    private readonly IApplication _application;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<ParametersEditorListCliMenuCommandFactoryStrategy> _logger;
     private readonly IParametersManager _parametersManager;
 
     public ParametersEditorListCliMenuCommandFactoryStrategy(
-        ILogger<ParametersEditorListCliMenuCommandFactoryStrategy> logger, IHttpClientFactory httpClientFactory, IParametersManager parametersManager)
+        ILogger<ParametersEditorListCliMenuCommandFactoryStrategy> logger, IHttpClientFactory httpClientFactory,
+        IParametersManager parametersManager, IApplication application)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _parametersManager = parametersManager;
+        _application = application;
     }
 
     public CliMenuCommand CreateMenuCommand()
     {
         var parameters = (ReplicatorParameters)_parametersManager.Parameters;
 
-        var replicatorParametersEditor =
-            new ReplicatorParametersEditor(_logger, _httpClientFactory, parameters, _parametersManager);
+        var replicatorParametersEditor = new ReplicatorParametersEditor(_application, _logger, _httpClientFactory,
+            parameters, _parametersManager);
         return new ParametersEditorListCliMenuCommand(replicatorParametersEditor);
     }
 }

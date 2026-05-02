@@ -10,13 +10,15 @@ using ParametersManagement.LibFileParameters.Models;
 using ParametersManagement.LibParameters;
 using ReplicatorConsole.Cruders;
 using ReplicatorShared.Data.Models;
+using SystemTools.SystemToolsShared;
 
 namespace ReplicatorConsole.Menu.ReplicatorParametersEdit;
 
 public sealed class ReplicatorParametersEditor : ParametersEditor
 {
-    public ReplicatorParametersEditor(ILogger logger, IHttpClientFactory httpClientFactory, IParameters parameters,
-        IParametersManager parametersManager) : base("Replicator Parameters Editor", parameters, parametersManager)
+    public ReplicatorParametersEditor(IApplication application, ILogger logger, IHttpClientFactory httpClientFactory,
+        IParameters parameters, IParametersManager parametersManager) : base("Replicator Parameters Editor", parameters,
+        parametersManager)
     {
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ReplicatorParameters.LogFolder)));
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ReplicatorParameters.WorkFolder)));
@@ -37,7 +39,8 @@ public sealed class ReplicatorParametersEditor : ParametersEditor
         //FieldEditors.Add(new DatabaseServerConnectionsFieldEditor(logger, httpClientFactory, parametersManager,
         //    nameof(ReplicatorParameters.DatabaseServerConnections)));
         FieldEditors.Add(new DictionaryFieldEditor<DatabaseServerConnectionCruder, DatabaseServerConnectionData>(
-            nameof(ReplicatorParameters.DatabaseServerConnections), logger, httpClientFactory, parametersManager));
+            nameof(ReplicatorParameters.DatabaseServerConnections), application, logger, httpClientFactory,
+            parametersManager));
 
         //FieldEditors.Add(new ApiClientsFieldEditor(logger, httpClientFactory, nameof(ReplicatorParameters.ApiClients),
         //    parametersManager));

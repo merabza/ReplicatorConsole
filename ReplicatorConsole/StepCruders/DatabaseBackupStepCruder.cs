@@ -9,15 +9,17 @@ using ReplicatorConsole.FieldEditors;
 using ReplicatorShared.Data.Models;
 using ReplicatorShared.Data.Steps;
 using SystemTools.BackgroundTasks;
+using SystemTools.SystemToolsShared;
 
 namespace ReplicatorConsole.StepCruders;
 
 public sealed class DatabaseBackupStepCruder : StepCruder<DatabaseBackupStep>
 {
-    public DatabaseBackupStepCruder(string appName, ILogger logger, IHttpClientFactory httpClientFactory,
+    public DatabaseBackupStepCruder(IApplication application, ILogger logger, IHttpClientFactory httpClientFactory,
         IProcesses processes, IParametersManager parametersManager,
-        Dictionary<string, DatabaseBackupStep> currentValuesDictionary) : base(appName, logger, httpClientFactory,
-        processes, parametersManager, currentValuesDictionary, "Database Backup Step", "Database Backup Steps")
+        Dictionary<string, DatabaseBackupStep> currentValuesDictionary) : base(application.AppName, logger,
+        httpClientFactory, processes, parametersManager, currentValuesDictionary, "Database Backup Step",
+        "Database Backup Steps")
     {
         string? parametersFileName = parametersManager.ParametersFileName;
 
@@ -25,20 +27,20 @@ public sealed class DatabaseBackupStepCruder : StepCruder<DatabaseBackupStep>
         tempFieldEditors.AddRange(FieldEditors);
         FieldEditors.Clear();
 
-        FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(appName, logger, httpClientFactory,
+        FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(application, logger, httpClientFactory,
             nameof(DatabaseBackupStep.DatabaseServerConnectionName), ParametersManager, true));
 
-        FieldEditors.Add(new DatabaseParametersFieldEditor(appName, logger, httpClientFactory,
+        FieldEditors.Add(new DatabaseParametersFieldEditor(application, logger, httpClientFactory,
             nameof(DatabaseBackupStep.DatabaseBackupParameters), parametersManager));
 
         FieldEditors.Add(new EnumFieldEditor<EDatabaseSet>(nameof(DatabaseBackupStep.DatabaseSet),
             EDatabaseSet.AllDatabases));
 
-        FieldEditors.Add(new DbServerFoldersSetNameFieldEditor(appName, logger, httpClientFactory,
+        FieldEditors.Add(new DbServerFoldersSetNameFieldEditor(application.AppName, logger, httpClientFactory,
             nameof(DatabaseBackupStep.DbServerFoldersSetName), parametersManager,
             nameof(DatabaseBackupStep.DatabaseServerConnectionName)));
 
-        FieldEditors.Add(new DatabaseNamesFieldEditor(appName, logger, httpClientFactory,
+        FieldEditors.Add(new DatabaseNamesFieldEditor(application.AppName, logger, httpClientFactory,
             nameof(DatabaseBackupStep.DatabaseNames), ParametersManager,
             nameof(DatabaseBackupStep.DatabaseServerConnectionName), nameof(DatabaseBackupStep.DatabaseSet)));
 

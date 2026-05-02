@@ -14,8 +14,8 @@ public class JobScheduleCruderListCliMenuCommandFactoryStrategy : IMenuCommandFa
     private readonly IApplication _application;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<JobScheduleCruderListCliMenuCommandFactoryStrategy> _logger;
-    private readonly IProcesses _processes;
     private readonly IParametersManager _parametersManager;
+    private readonly IProcesses _processes;
 
     public JobScheduleCruderListCliMenuCommandFactoryStrategy(
         ILogger<JobScheduleCruderListCliMenuCommandFactoryStrategy> logger, IHttpClientFactory httpClientFactory,

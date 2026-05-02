@@ -10,31 +10,19 @@ using SystemTools.SystemToolsShared;
 
 namespace ReplicatorConsole.Menu.MultiDatabaseProcessStepCruderList;
 
-public sealed class MultiDatabaseProcessStepCruderListCliMenuCommandFactoryStrategy : IMenuCommandFactoryStrategy
+// ReSharper disable once ClassNeverInstantiated.Global
+public sealed class MultiDatabaseProcessStepCruderListCliMenuCommandFactoryStrategy(
+    ILogger<MultiDatabaseProcessStepCruderListCliMenuCommandFactoryStrategy> logger,
+    IHttpClientFactory httpClientFactory,
+    IApplication application,
+    IProcesses processes,
+    IParametersManager parametersManager) : IMenuCommandFactoryStrategy
 {
-    private readonly IApplication _application;
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ILogger<MultiDatabaseProcessStepCruderListCliMenuCommandFactoryStrategy> _logger;
-    private readonly IParametersManager _parametersManager;
-    private readonly IProcesses _processes;
-
-    public MultiDatabaseProcessStepCruderListCliMenuCommandFactoryStrategy(
-        ILogger<MultiDatabaseProcessStepCruderListCliMenuCommandFactoryStrategy> logger,
-        IHttpClientFactory httpClientFactory, IApplication application, IProcesses processes,
-        IParametersManager parametersManager)
-    {
-        _logger = logger;
-        _httpClientFactory = httpClientFactory;
-        _application = application;
-        _processes = processes;
-        _parametersManager = parametersManager;
-    }
-
     public CliMenuCommand CreateMenuCommand()
     {
-        var parameters = (ReplicatorParameters)_parametersManager.Parameters;
+        var parameters = (ReplicatorParameters)parametersManager.Parameters;
 
-        return new CruderListCliMenuCommand(new MultiDatabaseProcessStepCruder(_application.AppName, _logger,
-            _httpClientFactory, _processes, _parametersManager, parameters.MultiDatabaseProcessSteps));
+        return new CruderListCliMenuCommand(new MultiDatabaseProcessStepCruder(application, logger, httpClientFactory,
+            processes, parametersManager, parameters.MultiDatabaseProcessSteps));
     }
 }

@@ -12,15 +12,15 @@ namespace ReplicatorConsole.MenuCommands;
 
 public sealed class GenerateStandardDatabaseStepsCliMenuCommand : CliMenuCommand
 {
-    private readonly string _appName;
+    private readonly IApplication _application;
     private readonly ILogger _logger;
     private readonly ParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public GenerateStandardDatabaseStepsCliMenuCommand(string appName, ILogger logger, ParametersManager parametersManager) :
-        base("Generate Standard Database Jobs...", EMenuAction.Reload)
+    public GenerateStandardDatabaseStepsCliMenuCommand(IApplication application, ILogger logger,
+        ParametersManager parametersManager) : base("Generate Standard Database Jobs...", EMenuAction.Reload)
     {
-        _appName = appName;
+        _application = application;
         _parametersManager = parametersManager;
         _logger = logger;
     }
@@ -28,7 +28,7 @@ public sealed class GenerateStandardDatabaseStepsCliMenuCommand : CliMenuCommand
     protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var databaseServerConnectionCruder =
-            DatabaseServerConnectionCruder.Create(_appName, _logger, null, _parametersManager);
+            DatabaseServerConnectionCruder.Create(_application, _logger, null, _parametersManager);
 
         string? databaseConnectionName = await databaseServerConnectionCruder.GetNameWithPossibleNewName(
             "Select local connection for Generate standard database maintenance schema", null, null, false,
@@ -42,8 +42,8 @@ public sealed class GenerateStandardDatabaseStepsCliMenuCommand : CliMenuCommand
 
         var parameters = (ReplicatorParameters)_parametersManager.Parameters;
 
-        var standardJobsSchemaGenerator = new StandardJobsSchemaGenerator(_appName, true, _logger, _parametersManager,
-            databaseConnectionName, _parametersManager.ParametersFileName);
+        var standardJobsSchemaGenerator = new StandardJobsSchemaGenerator(_application.AppName, true, _logger,
+            _parametersManager, databaseConnectionName, _parametersManager.ParametersFileName);
         await standardJobsSchemaGenerator.Generate(cancellationToken);
 
         //შენახვა

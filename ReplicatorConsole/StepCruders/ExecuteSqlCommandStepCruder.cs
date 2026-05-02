@@ -8,28 +8,30 @@ using ParametersManagement.LibParameters;
 using ReplicatorConsole.FieldEditors;
 using ReplicatorShared.Data.Steps;
 using SystemTools.BackgroundTasks;
+using SystemTools.SystemToolsShared;
 
 namespace ReplicatorConsole.StepCruders;
 
 public sealed class ExecuteSqlCommandStepCruder : StepCruder<ExecuteSqlCommandStep>
 {
-    public ExecuteSqlCommandStepCruder(string appName, ILogger logger, IHttpClientFactory httpClientFactory,
+    public ExecuteSqlCommandStepCruder(IApplication application, ILogger logger, IHttpClientFactory httpClientFactory,
         IProcesses processes, IParametersManager parametersManager,
-        Dictionary<string, ExecuteSqlCommandStep> currentValuesDictionary) : base(appName, logger, httpClientFactory,
-        processes, parametersManager, currentValuesDictionary, "Execute SQL Command Step", "Execute SQL Command Steps")
+        Dictionary<string, ExecuteSqlCommandStep> currentValuesDictionary) : base(application.AppName, logger,
+        httpClientFactory, processes, parametersManager, currentValuesDictionary, "Execute SQL Command Step",
+        "Execute SQL Command Steps")
     {
         List<FieldEditor> tempFieldEditors = [..FieldEditors];
 
         FieldEditors.Clear();
 
         //public string DatabaseServerConnectionName { get; set; }
-        FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(appName, logger, httpClientFactory,
+        FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(application, logger, httpClientFactory,
             nameof(ExecuteSqlCommandStep.DatabaseServerConnectionName), ParametersManager, true));
         //public string DatabaseWebAgentName { get; set; }
         FieldEditors.Add(new ApiClientNameFieldEditor(nameof(ExecuteSqlCommandStep.DatabaseWebAgentName), logger,
             httpClientFactory, ParametersManager, true));
 
-        FieldEditors.Add(new OneDatabaseNameFieldEditor(appName, logger, httpClientFactory,
+        FieldEditors.Add(new OneDatabaseNameFieldEditor(application.AppName, logger, httpClientFactory,
             nameof(ExecuteSqlCommandStep.DatabaseName), ParametersManager,
             nameof(ExecuteSqlCommandStep.DatabaseServerConnectionName)));
 
