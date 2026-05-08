@@ -23,9 +23,9 @@ This repo only contains the `ReplicatorConsole/ReplicatorConsole.csproj` executa
 
 ## Build & run
 
-- Target framework: **net10.0** (set in `Directory.Build.props`). To target net8/net9 instead, uncomment the relevant `TargetFramework` line in `Directory.Build.props` and adjust `Directory.Packages.props` accordingly.
+- Target framework: **net10.0** (set in `Directory.Build.props`).
 - Solution uses the new XML solution format (`.slnx`). Build with `dotnet build ReplicatorConsole.slnx` (or open in VS / Rider).
-- Run: `dotnet run --project ReplicatorConsole/ReplicatorConsole.csproj -- --use "<path-to-parameters.json>"`. The `--use <file>` switch is required — `Program.cs` exits with code 1/2 otherwise. `Properties/launchSettings.json` shows the local dev path that's used in the IDE.
+- Run: `dotnet run --project ReplicatorConsole/ReplicatorConsole.csproj -- --use "<path-to-parameters.json>"`. The `--use <file>` switch is required — `Program.cs` exits with code 1/2 otherwise. `Properties/launchSettings.json` shows the local dev path used in the IDE.
 - Centralized package versions live in `Directory.Packages.props` (`ManagePackageVersionsCentrally=true`); add `PackageVersion` entries there, not in individual `csproj`s.
 - Strict analysis is enforced via `Directory.Build.props`: `TreatWarningsAsErrors=true`, `AnalysisMode=All`, `EnforceCodeStyleInBuild=true`, plus `SonarAnalyzer.CSharp`. Code-style rules from `.editorconfig` are also build-breaking (file-scoped namespaces, no `var` for built-ins, `using` outside namespace, etc.). A clean local build is required before commit.
 
@@ -35,7 +35,7 @@ ReplicatorConsole edits a JSON parameters file (`ReplicatorParameters`, defined 
 
 The parameters file holds dictionaries of:
 
-- **Schedules** (`JobSchedules`) — when jobs run
+- **Schedules** (`JobSchedules`) — when jobs run.
 - **Steps** — what jobs do. Each step type (`DatabaseBackupStep`, `MultiDatabaseProcessStep`, `RunProgramStep`, `ExecuteSqlCommandStep`, `FilesBackupStep`, `FilesSyncStep`, `FilesMoveStep`, `UnZipOnPlaceStep`) extends `JobStep` and lives in `ReplicatorShared.Data.Steps`. They are stored in matching dictionaries on `ReplicatorParameters` (e.g. `DatabaseBackupSteps`).
 - **Step↔schedule binding** (`JobsBySchedules`) — which steps belong to which schedule, with an ordering field.
 - **Shared resources** — `DatabaseServerConnections`, `FileStorages`, `Archivers`, `SmartSchemas`, `ExcludeSets`, `ReplacePairsSets`, `ApiClients`. `ReplicatorParameters` implements the corresponding `IParametersWith…` marker interfaces from `ParametersManagement.LibFileParameters.Interfaces`, which is what lets the generic field editors discover them.
@@ -65,7 +65,7 @@ Each step type has a cruder extending `StepCruder<TStep> : ParCruder<TStep>` tha
 1. Adds the step-type-specific `FieldEditors` (e.g. `DatabaseBackupStepCruder` adds DB connection, smart schema, archiver, etc. fields)
 2. Inherits the common `JobStep` editors (`ProcLineId`, `DelayMinutesBeforeStep/After`, `HoleStartTime/EndTime`, `PeriodType`, `FreqInterval`, `StartAt`, `Enabled`) added by the base
 3. Overrides `FillDetailsSubMenu` to inject "Run this step now" + per-schedule toggle commands
-4. Note the `tempFieldEditors` shuffle in subclasses (e.g. `DatabaseBackupStepCruder.cs:26-63`): the subclass *clears* the inherited list, adds its own fields first, then re-appends the base ones. Field order in the cruder = field order in the UI.
+4. Note the `tempFieldEditors` shuffle in subclasses (e.g. [DatabaseBackupStepCruder.cs:26-63](ReplicatorConsole/StepCruders/DatabaseBackupStepCruder.cs)): the subclass *clears* the inherited list, adds its own fields first, then re-appends the base ones. Field order in the cruder = field order in the UI.
 
 ### `ReplicatorParametersEditor` (`Menu/ReplicatorParametersEdit/`)
 

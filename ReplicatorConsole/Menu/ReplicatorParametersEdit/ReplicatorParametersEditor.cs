@@ -9,6 +9,7 @@ using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibFileParameters.Models;
 using ParametersManagement.LibParameters;
 using ReplicatorConsole.Cruders;
+using ReplicatorConsole.Models;
 using ReplicatorShared.Data.Models;
 using SystemTools.SystemToolsShared;
 
@@ -70,5 +71,11 @@ public sealed class ReplicatorParametersEditor : ParametersEditor
         //FieldEditors.Add(new ArchiversFieldEditor(nameof(ReplicatorParameters.Archivers), parametersManager));
         FieldEditors.Add(new DictionaryFieldEditor<ArchiverCruder, ArchiverData>(nameof(ReplicatorParameters.Archivers),
             parametersManager));
+
+        FieldEditors.Add(
+            new DictionaryFieldEditor<RetryStrategyParametersCruder, RetryStrategyParameters>(nameof(ReplicatorParameters.RetryStrategyParameters),
+                parametersManager));
+
+
     }
 }

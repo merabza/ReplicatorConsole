@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"D:\\\\1WorkDotnet\\\\ReplicatorConsole\")",
+      "Bash(git -C \"D:\\\\1WorkDotnet\\\\ReplicatorConsole\\\\ReplicatorConsole\" log --oneline -20)",
+      "Bash(git -C \"D:\\\\1WorkDotnet\\\\ReplicatorConsole\\\\ReplicatorConsole\" log --diff-filter=D --name-only --pretty=format:)",
+      "Bash(git -C \"D:\\\\1WorkDotnet\\\\ReplicatorConsole\\\\ReplicatorConsole\" log --all --diff-filter=D --name-only -- CLAUDE.md)",
+      "Bash(git -C \"D:\\\\1WorkDotnet\\\\ReplicatorConsole\\\\ReplicatorConsole\" show 97cbb2c -- CLAUDE.md)"
+    ]
+  }
+}
