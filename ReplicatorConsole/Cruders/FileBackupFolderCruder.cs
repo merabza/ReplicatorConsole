@@ -39,7 +39,7 @@ public sealed class FileBackupFolderCruder : SimpleNamesWithDescriptionsCruder
     //    UpdateRecordWithKey(_record, _currentValuesDictionary);
     //    await base.Save(message, cancellationToken);
     //}
-    public override ValueTask Save(string message, CancellationToken cancellationToken = default)
+    public override ValueTask<bool> Save(string message, CancellationToken cancellationToken = default)
     {
         return _parametersManager.Save(_parametersManager.Parameters, message, null, cancellationToken);
     }

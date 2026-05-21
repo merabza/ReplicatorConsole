@@ -59,9 +59,9 @@ public sealed class FolderPathsSetCruder : Cruder
         return ValueTask.CompletedTask;
     }
 
-    public override async ValueTask Save(string message, CancellationToken cancellationToken = default)
+    public override ValueTask<bool> Save(string message, CancellationToken cancellationToken = default)
     {
         _folderPathsSetFieldEditor.Update(_record, _currentValuesList);
-        await base.Save(message, cancellationToken);
+        return base.Save(message, cancellationToken);
     }
 }

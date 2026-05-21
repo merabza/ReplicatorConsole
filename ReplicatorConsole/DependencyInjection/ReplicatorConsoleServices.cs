@@ -1,8 +1,6 @@
 ﻿using System;
 using AppCliTools.CliMenu;
-using AppCliTools.CliMenu.DependencyInjection;
 using AppCliTools.CliTools.App;
-using AppCliTools.CliTools.DependencyInjection;
 using AppCliTools.CliTools.Services.MenuBuilder;
 using Microsoft.Extensions.DependencyInjection;
 using ParametersManagement.LibParameters;
@@ -10,7 +8,9 @@ using ReplicatorConsole.Menu.ReplicatorParametersEdit;
 using ReplicatorShared.Data.Models;
 using Serilog.Events;
 using SystemTools.BackgroundTasks;
+using SystemTools.SerilogStuff.DependencyInjection;
 using SystemTools.SystemToolsShared;
+using SystemTools.SystemToolsShared.DependencyInjection;
 
 namespace ReplicatorConsole.DependencyInjection;
 
