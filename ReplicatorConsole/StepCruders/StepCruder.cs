@@ -5,6 +5,7 @@ using System.Net.Http;
 using AppCliTools.CliMenu;
 using AppCliTools.CliParameters;
 using AppCliTools.CliParameters.FieldEditors;
+using AppCliTools.CliParametersEdit.FieldEditors;
 using Microsoft.Extensions.Logging;
 using ParametersManagement.LibParameters;
 using ReplicatorConsole.FieldEditors;
@@ -43,6 +44,8 @@ public /*open*/ class StepCruder<TStep> : ParCruder<TStep> where TStep : JobStep
         FieldEditors.Add(new IntFieldEditor(nameof(JobStep.FreqInterval), 1));
         FieldEditors.Add(new DateTimeFieldEditor(nameof(JobStep.StartAt), DateTime.Today));
         FieldEditors.Add(new BoolFieldEditor(nameof(JobStep.Enabled), true));
+        FieldEditors.Add(
+            new RetryStrategyParametersNameFieldEditor(nameof(JobStep.RetryStrategyName), parametersManager));
     }
 
     //public საჭიროა Replicator პროექტისათვის
