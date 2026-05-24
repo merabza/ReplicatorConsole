@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using AppCliTools.CliMenu;
@@ -35,7 +36,7 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         _parametersFileName = parametersFileName;
     }
 
-    protected override ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (ReplicatorParameters)_parametersManager.Parameters;
 
@@ -45,11 +46,13 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         if (string.IsNullOrWhiteSpace(procLogFilesFolder))
         {
             StShared.WriteErrorLine("procLogFilesFolder does not counted. step does not started", true, _logger);
-            return new ValueTask<bool>(false);
+            return false;
         }
 
-        // ReSharper disable once using
-        using ProcessManager processManager = _processes.GetNewProcessManager();
+        // Lifecycle-ს მართავს IProcesses singleton-ი — აქ Dispose არ ვუძახოთ
+#pragma warning disable CA2000
+        ProcessManager processManager = _processes.GetNewProcessManager();
+#pragma warning restore CA2000
 
         ProcessesToolAction? stepToolAction = _jobStep.GetToolAction(_appName, _logger, _httpClientFactory, true,
             processManager, parameters, procLogFilesFolder);
@@ -57,10 +60,12 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         if (stepToolAction is null)
         {
             StShared.WriteErrorLine("stepToolAction does not found. step does not started", true, _logger);
-            return new ValueTask<bool>(false);
+            return false;
         }
 
         processManager.Run(stepToolAction);
-        return new ValueTask<bool>(true);
+        await _processes.WaitForFinishAll();
+        Console.WriteLine("Process finished");
+        return true;
     }
 }

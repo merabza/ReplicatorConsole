@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using AppCliTools.CliMenu;
@@ -34,20 +35,23 @@ public sealed class RunAllStepsNowCommand : CliMenuCommand
         _parametersFileName = parametersFileName;
     }
 
-    protected override ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (ReplicatorParameters)_parametersManager.Parameters;
 
         string? procLogFilesFolder =
             parameters.CountLocalPath(parameters.ProcLogFilesFolder, _parametersFileName, "ProcLogFiles");
 
-        if (!string.IsNullOrWhiteSpace(procLogFilesFolder))
+        if (string.IsNullOrWhiteSpace(procLogFilesFolder))
         {
-            return ValueTask.FromResult(parameters.RunAllSteps(_appName, _logger, _httpClientFactory, true,
-                _jobScheduleName, _processes, procLogFilesFolder));
+            StShared.WriteErrorLine("procLogFilesFolder does not counted. cannot run steps", true, _logger);
+            return false;
         }
 
-        StShared.WriteErrorLine("procLogFilesFolder does not counted. cannot run steps", true, _logger);
-        return ValueTask.FromResult(false);
+        bool result = parameters.RunAllSteps(_appName, _logger, _httpClientFactory, true,
+            _jobScheduleName, _processes, procLogFilesFolder);
+        await _processes.WaitForFinishAll();
+        Console.WriteLine("Process finished");
+        return result;
     }
 }
