@@ -61,7 +61,7 @@ public sealed class ReplicatorParametersEditor : ParametersEditor
 
         //FieldEditors.Add(new ReplacePairsSetFieldEditor(nameof(ReplicatorParameters.ReplacePairsSets), parametersManager));
         FieldEditors.Add(new DictionaryFieldEditor<ReplacePairsSetCruder, ReplacePairsSet>(
-            nameof(ReplicatorParameters.ReplacePairsSets), logger, httpClientFactory, parametersManager));
+            nameof(ReplicatorParameters.ReplacePairsSets), parametersManager));
 
         //FieldEditors.Add(new SmartSchemasFieldEditor(nameof(ReplicatorParameters.SmartSchemas), parametersManager));
         FieldEditors.Add(
