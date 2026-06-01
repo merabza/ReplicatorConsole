@@ -59,13 +59,13 @@ public static class ReplicatorConsoleServices
         return services;
     }
 
-    private static IServiceCollection AddApplication(this IServiceCollection services,
-        Action<ApplicationOptions> setupAction)
-    {
-        services.AddSingleton<IApplication, Application>();
-        services.Configure(setupAction);
-        return services;
-    }
+    //private static IServiceCollection AddApplication(this IServiceCollection services,
+    //    Action<ApplicationOptions> setupAction)
+    //{
+    //    services.AddSingleton<IApplication, Application>();
+    //    services.Configure(setupAction);
+    //    return services;
+    //}
 
     // ReSharper disable once UnusedMethodReturnValue.Local
     private static IServiceCollection AddMainParametersManager(this IServiceCollection services,
