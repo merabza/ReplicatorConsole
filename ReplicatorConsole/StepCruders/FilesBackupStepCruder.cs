@@ -32,24 +32,31 @@ public sealed class FilesBackupStepCruder : StepCruder<FilesBackupStep>
 
         FieldEditors.Add(new TextFieldEditor(nameof(FilesBackupStep.MaskName),
             $"{Environment.MachineName.Capitalize()}_"));
+
         FieldEditors.Add(new TextFieldEditor(nameof(FilesBackupStep.DateMask), dateMask));
+
         FieldEditors.Add(new LocalPathFieldEditor(nameof(FilesBackupStep.LocalPath), ParametersManager, null,
             parametersFileName));
+
         FieldEditors.Add(new ArchiverFieldEditor(nameof(FilesBackupStep.ArchiverName), ParametersManager));
-        FieldEditors.Add(
-            new SmartSchemaNameFieldEditor(nameof(FilesBackupStep.LocalSmartSchemaName), ParametersManager));
-        FieldEditors.Add(new FileStorageNameFieldEditor(logger, nameof(FilesBackupStep.UploadFileStorageName),
-            ParametersManager));
-        FieldEditors.Add(new IntFieldEditor(nameof(FilesBackupStep.UploadProcLineId), 1));
-        FieldEditors.Add(new SmartSchemaNameFieldEditor(nameof(FilesBackupStep.UploadSmartSchemaName),
-            ParametersManager));
-        FieldEditors.Add(new BoolFieldEditor(nameof(FilesBackupStep.BackupSeparately), true));
-        FieldEditors.Add(new ExcludeSetNameFieldEditor(nameof(FilesBackupStep.ExcludeSetName), ParametersManager));
-        //FieldEditors.Add(new BackupFolderPathsFieldEditor(nameof(FilesBackupStep.BackupFolderPaths)));
 
         FieldEditors.Add(
-            new SimpleNamesWithDescriptionsFieldEditor<FileBackupFolderCruder>(
-                nameof(FilesBackupStep.BackupFolderPaths), ParametersManager));
+            new SmartSchemaNameFieldEditor(nameof(FilesBackupStep.LocalSmartSchemaName), ParametersManager));
+
+        FieldEditors.Add(new FileStorageNameFieldEditor(logger, nameof(FilesBackupStep.UploadFileStorageName),
+            ParametersManager));
+
+        FieldEditors.Add(new IntFieldEditor(nameof(FilesBackupStep.UploadProcLineId), 1));
+
+        FieldEditors.Add(new SmartSchemaNameFieldEditor(nameof(FilesBackupStep.UploadSmartSchemaName),
+            ParametersManager));
+
+        FieldEditors.Add(new BoolFieldEditor(nameof(FilesBackupStep.BackupSeparately), true));
+
+        FieldEditors.Add(new ExcludeSetNameFieldEditor(nameof(FilesBackupStep.ExcludeSetName), ParametersManager));
+
+        FieldEditors.Add(new SimpleNamesWithDescriptionsFieldEditor<FileBackupFolderCruder>(
+            nameof(FilesBackupStep.BackupFolderPaths), x => new FileBackupFolderCruder(parametersManager, x)));
 
         FieldEditors.AddRange(tempFieldEditors);
     }

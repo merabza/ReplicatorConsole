@@ -65,8 +65,7 @@ public sealed class MultiSelectSubfoldersWithMasksCommand : CliMenuCommand
                 //გამორთული ამოვაკლოთ თუ არსებობს
                 //ლექსიკონი key=mask, value=path სტრუქტურით არის,
                 //ამიტომ წასაშლელად ჯერ ნიღაბი (key) უნდა მოვძებნოთ მითითებული გზის (value) მიხედვით
-                string? maskToRemove =
-                    _masksAndFolders.FirstOrDefault(kvp => kvp.Value == path).Key;
+                string? maskToRemove = _masksAndFolders.FirstOrDefault(kvp => kvp.Value == path).Key;
                 if (maskToRemove is not null)
                 {
                     _masksAndFolders.Remove(maskToRemove);

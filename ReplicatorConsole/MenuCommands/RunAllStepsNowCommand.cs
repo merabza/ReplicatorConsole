@@ -48,8 +48,8 @@ public sealed class RunAllStepsNowCommand : CliMenuCommand
             return false;
         }
 
-        bool result = parameters.RunAllSteps(_appName, _logger, _httpClientFactory, true,
-            _jobScheduleName, _processes, procLogFilesFolder);
+        bool result = parameters.RunAllSteps(_appName, _logger, _httpClientFactory, true, _jobScheduleName, _processes,
+            procLogFilesFolder);
         await _processes.WaitForFinishAll();
         Console.WriteLine("Process finished");
         return result;

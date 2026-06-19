@@ -9,7 +9,6 @@ using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibFileParameters.Models;
 using ParametersManagement.LibParameters;
 using ReplicatorConsole.Cruders;
-using ReplicatorConsole.Models;
 using ReplicatorShared.Data.Models;
 using SystemTools.SystemToolsShared;
 
@@ -24,58 +23,44 @@ public sealed class ReplicatorParametersEditor : ParametersEditor
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ReplicatorParameters.LogFolder)));
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ReplicatorParameters.WorkFolder)));
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ReplicatorParameters.ProcLogFilesFolder)));
+
         FieldEditors.Add(
             new FilePathFieldEditor(nameof(ReplicatorParameters
                 .ReplicatorParametersFileNameForLocalReplicatorService)));
 
         FieldEditors.Add(new TextFieldEditor(nameof(ReplicatorParameters.UploadFileTempExtension),
             ReplicatorParameters.DefaultUploadFileTempExtension));
+
         FieldEditors.Add(new TextFieldEditor(nameof(ReplicatorParameters.DownloadFileTempExtension),
             ReplicatorParameters.DefaultDownloadFileTempExtension));
+
         FieldEditors.Add(new TextFieldEditor(nameof(ReplicatorParameters.ArchivingFileTempExtension),
             ReplicatorParameters.DefaultArchivingFileTempExtension));
+
         FieldEditors.Add(new TextFieldEditor(nameof(ReplicatorParameters.DateMask),
             ReplicatorParameters.DefaultDateMask));
 
-        //FieldEditors.Add(new DatabaseServerConnectionsFieldEditor(logger, httpClientFactory, parametersManager,
-        //    nameof(ReplicatorParameters.DatabaseServerConnections)));
         FieldEditors.Add(new DictionaryFieldEditor<DatabaseServerConnectionCruder, DatabaseServerConnectionData>(
-            nameof(ReplicatorParameters.DatabaseServerConnections), application, logger, httpClientFactory,
-            parametersManager));
+            nameof(ReplicatorParameters.DatabaseServerConnections),
+            x => new DatabaseServerConnectionCruder(application, logger, httpClientFactory, parametersManager, x)));
 
-        //FieldEditors.Add(new ApiClientsFieldEditor(logger, httpClientFactory, nameof(ReplicatorParameters.ApiClients),
-        //    parametersManager));
-        //FieldEditors.Add(new DictionaryFieldEditor<ApiClientCruder, ApiClientSettings>(
-        //    nameof(ReplicatorParameters.ApiClients), logger, httpClientFactory, parametersManager));
+        FieldEditors.Add(new DictionaryFieldEditor<FileStorageCruder, FileStorageData>(
+            nameof(ReplicatorParameters.FileStorages), x => new FileStorageCruder(logger, parametersManager, x)));
 
-        //FieldEditors.Add(new FileStoragesFieldEditor(logger, nameof(ReplicatorParameters.FileStorages),
-        //    parametersManager));
-        FieldEditors.Add(
-            new DictionaryFieldEditor<FileStorageCruder, FileStorageData>(nameof(ReplicatorParameters.FileStorages),
-                logger, parametersManager));
+        FieldEditors.Add(new DictionaryFieldEditor<ExcludeSetCruder, ExcludeSet>(
+            nameof(ReplicatorParameters.ExcludeSets), x => new ExcludeSetCruder(parametersManager, x)));
 
-        //FieldEditors.Add(new ExcludeSetsFieldEditor(nameof(ReplicatorParameters.ExcludeSets), parametersManager));
-        FieldEditors.Add(
-            new DictionaryFieldEditor<ExcludeSetCruder, ExcludeSet>(nameof(ReplicatorParameters.ExcludeSets),
-                parametersManager));
-
-        //FieldEditors.Add(new ReplacePairsSetFieldEditor(nameof(ReplicatorParameters.ReplacePairsSets), parametersManager));
         FieldEditors.Add(new DictionaryFieldEditor<ReplacePairsSetCruder, ReplacePairsSet>(
-            nameof(ReplicatorParameters.ReplacePairsSets), parametersManager));
+            nameof(ReplicatorParameters.ReplacePairsSets), x => new ReplacePairsSetCruder(parametersManager, x)));
 
-        //FieldEditors.Add(new SmartSchemasFieldEditor(nameof(ReplicatorParameters.SmartSchemas), parametersManager));
-        FieldEditors.Add(
-            new DictionaryFieldEditor<SmartSchemaCruder, SmartSchema>(nameof(ReplicatorParameters.SmartSchemas),
-                parametersManager));
+        FieldEditors.Add(new DictionaryFieldEditor<SmartSchemaCruder, SmartSchema>(
+            nameof(ReplicatorParameters.SmartSchemas), x => new SmartSchemaCruder(parametersManager, x)));
 
-        //FieldEditors.Add(new ArchiversFieldEditor(nameof(ReplicatorParameters.Archivers), parametersManager));
         FieldEditors.Add(new DictionaryFieldEditor<ArchiverCruder, ArchiverData>(nameof(ReplicatorParameters.Archivers),
-            parametersManager));
+            x => new ArchiverCruder(parametersManager, x)));
 
-        FieldEditors.Add(
-            new DictionaryFieldEditor<RetryStrategyParametersCruder, RetryStrategyParameters>(nameof(ReplicatorParameters.RetryStrategyParameters),
-                parametersManager));
-
-
+        FieldEditors.Add(new DictionaryFieldEditor<RetryStrategyParametersCruder, RetryStrategyParameters>(
+            nameof(ReplicatorParameters.RetryStrategyParameters),
+            x => new RetryStrategyParametersCruder(parametersManager, x)));
     }
 }
