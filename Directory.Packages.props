@@ -12,7 +12,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
     <PackageVersion Include="ReplicatorShared.Data" Version="1.0.9686.36920" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.27.0.140913" />
-    <PackageVersion Include="SystemTools.SerilogStuff" Version="1.0.9686.33588" />
+    <PackageVersion Include="SystemTools.SerilogStuff" Version="1.0.9689.2043" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
