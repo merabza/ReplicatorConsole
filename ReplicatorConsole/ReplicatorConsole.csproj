@@ -8,12 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AppCliTools.CliParameters" />
-    <PackageReference Include="AppCliTools.CliParametersDataEdit" />
-    <PackageReference Include="AppCliTools.CliParametersExcludeSetsEdit" />
-    <PackageReference Include="AppCliTools.CliTools" />
-    <PackageReference Include="ReplicatorShared.Data" />
-    <PackageReference Include="SystemTools.SerilogStuff" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParameters\AppCliTools.CliParameters.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParametersDataEdit\AppCliTools.CliParametersDataEdit.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParametersExcludeSetsEdit\AppCliTools.CliParametersExcludeSetsEdit.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliTools\AppCliTools.CliTools.csproj" />
+    <ProjectReference Include="..\..\ReplicatorShared\ReplicatorShared.Data\ReplicatorShared.Data.csproj" />
+    <ProjectReference Include="..\..\SystemTools\SystemTools.SerilogStuff\SystemTools.SerilogStuff.csproj" />
   </ItemGroup>
 
 </Project>
