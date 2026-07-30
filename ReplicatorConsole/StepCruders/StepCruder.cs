@@ -70,8 +70,10 @@ public /*open*/ class StepCruder<TStep> : ParCruder<TStep> where TStep : JobStep
         //if (parameters == null)
         //    return;
 
-        List<string> scheduleNamesList = parameters.JobsBySchedules.Where(w => w.JobStepName == itemName)
-            .Select(s => s.ScheduleName).ToList();
+        List<string> scheduleNamesList =
+        [
+            .. parameters.JobsBySchedules.Where(w => w.JobStepName == itemName).Select(s => s.ScheduleName)
+        ];
         foreach (KeyValuePair<string, JobSchedule> kvp in parameters.JobSchedules)
         {
             itemSubMenuSet.AddMenuItem(new SelectScheduleNamesCommand(ParametersManager, itemName, kvp.Key,

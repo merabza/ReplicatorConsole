@@ -313,11 +313,14 @@ internal sealed class StandardJobsSchemaGenerator
 
     private static string CreateJobScheduleHourly(ReplicatorParameters parameters)
     {
-        List<KeyValuePair<string, JobSchedule>> jsdKvp = parameters.JobSchedules.Where(w => w.Value is
-        {
-            Enabled: true, ScheduleType: EScheduleType.Daily,
-            DailyFrequencyType: EDailyFrequency.OccursManyTimes
-        }).ToList();
+        List<KeyValuePair<string, JobSchedule>> jsdKvp =
+        [
+            .. parameters.JobSchedules.Where(w => w.Value is
+            {
+                Enabled: true, ScheduleType: EScheduleType.Daily,
+                DailyFrequencyType: EDailyFrequency.OccursManyTimes
+            })
+        ];
 
         if (jsdKvp.Any())
         {
@@ -338,17 +341,20 @@ internal sealed class StandardJobsSchemaGenerator
             ActiveEndDayTime = new TimeSpan(23, 59, 59)
         };
 
-        string name = CreateNewName(["Hourly"], parameters.JobSchedules.Keys.ToList());
+        string name = CreateNewName(["Hourly"], [.. parameters.JobSchedules.Keys]);
         parameters.JobSchedules.Add(name, jobScheduleHourly);
         return name;
     }
 
     private static string CreateJobScheduleDaily(ReplicatorParameters parameters)
     {
-        List<KeyValuePair<string, JobSchedule>> jsdKvp = parameters.JobSchedules.Where(w => w.Value is
-        {
-            Enabled: true, ScheduleType: EScheduleType.Daily, DailyFrequencyType: EDailyFrequency.OccursOnce
-        }).ToList();
+        List<KeyValuePair<string, JobSchedule>> jsdKvp =
+        [
+            .. parameters.JobSchedules.Where(w => w.Value is
+            {
+                Enabled: true, ScheduleType: EScheduleType.Daily, DailyFrequencyType: EDailyFrequency.OccursOnce
+            })
+        ];
 
         if (jsdKvp.Any())
         {
@@ -375,8 +381,10 @@ internal sealed class StandardJobsSchemaGenerator
     private static string CreateJobScheduleAtStart(ReplicatorParameters parameters)
     {
         const string atStartName = "AtStart";
-        List<KeyValuePair<string, JobSchedule>> jsdKvp = parameters.JobSchedules
-            .Where(w => w.Value is { Enabled: true, ScheduleType: EScheduleType.AtStart }).ToList();
+        List<KeyValuePair<string, JobSchedule>> jsdKvp =
+        [
+            .. parameters.JobSchedules.Where(w => w.Value is { Enabled: true, ScheduleType: EScheduleType.AtStart })
+        ];
 
         if (jsdKvp.Count != 0)
         {
