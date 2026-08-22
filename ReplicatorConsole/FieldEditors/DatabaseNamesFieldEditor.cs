@@ -60,14 +60,14 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
         List<DatabaseInfoModel> dbList;
 
-        OneOf<IDatabaseManager, Error[]> createDatabaseManagerResult =
+        OneOf<IDatabaseManager, ErrorOmd[]> createDatabaseManagerResult =
             await DatabaseManagersFactory.CreateDatabaseManager(_appName, _logger, true, databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections), null, _httpClientFactory, null,
                 null, cancellationToken);
 
         if (createDatabaseManagerResult.IsT1)
         {
-            Error.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+            ErrorOmd.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
             StShared.WriteErrorLine(
                 $"DatabaseManagementClient does not created for database Server Connection {databaseServerConnectionName}",
                 true, _logger);

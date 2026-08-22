@@ -43,16 +43,16 @@ public sealed class ProcLineCounter : SCounter
             return false;
         }
 
-        OneOf<IDatabaseManager, Error[]> createDatabaseManagerResult = DatabaseManagersFactory
+        OneOf<IDatabaseManager, ErrorOmd[]> createDatabaseManagerResult = DatabaseManagersFactory
             .CreateDatabaseManager(_appName, _logger, true, _databaseServerConnectionName,
                 new DatabaseServerConnections(parametersDsc.DatabaseServerConnections), CancellationToken.None).Result;
 
         if (createDatabaseManagerResult.IsT1)
         {
-            Error.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+            ErrorOmd.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
         }
 
-        OneOf<bool, Error[]> isServerLocalResult =
+        OneOf<bool, ErrorOmd[]> isServerLocalResult =
             createDatabaseManagerResult.AsT0.IsServerLocal(CancellationToken.None).Result;
         return isServerLocalResult is { IsT0: true, AsT0: true };
     }

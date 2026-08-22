@@ -78,7 +78,7 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
             return dbList;
         }
 
-        OneOf<IDatabaseManager, Error[]> createDatabaseManagerResult = DatabaseManagersFactory
+        OneOf<IDatabaseManager, ErrorOmd[]> createDatabaseManagerResult = DatabaseManagersFactory
             .CreateDatabaseManager(_appName, _logger, true, databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections), null, _httpClientFactory, null,
                 null, CancellationToken.None).Result;
