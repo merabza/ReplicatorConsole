@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using DatabaseTools.DbTools.Models;
 using Microsoft.Extensions.Logging;
-using OneOf;
 using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibParameters;
-using SystemTools.SystemToolsShared.Errors;
+using SystemTools.SharedKernel;
+using SystemTools.SystemToolsShared;
 using ToolsManagement.DatabasesManagement;
 
 namespace ReplicatorConsole.Counters;
@@ -30,20 +30,20 @@ public sealed class StepNamePrefixCounter
     {
         var parameters = (IParametersWithDatabaseServerConnections)_parametersManager.Parameters;
 
-        OneOf<IDatabaseManager, ErrorOmd[]> createDatabaseManagerResult = DatabaseManagersFactory
-            .CreateDatabaseManager(_appName, _logger, true, _databaseServerConnectionName,
-                new DatabaseServerConnections(parameters.DatabaseServerConnections), CancellationToken.None).Result;
+        Result<IDatabaseManager> createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_appName,
+            _logger, true, _databaseServerConnectionName,
+            new DatabaseServerConnections(parameters.DatabaseServerConnections), CancellationToken.None).Result;
 
-        if (createDatabaseManagerResult.IsT1)
+        if (createDatabaseManagerResult.IsFailure)
         {
-            ErrorOmd.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+            createDatabaseManagerResult.Error.PrintErrorsOnConsole();
         }
 
-        OneOf<DbServerInfo, ErrorOmd[]> getDatabaseServerInfoResult =
-            createDatabaseManagerResult.AsT0.GetDatabaseServerInfo(CancellationToken.None).Result;
-        if (getDatabaseServerInfoResult.IsT0)
+        Result<DbServerInfo> getDatabaseServerInfoResult =
+            createDatabaseManagerResult.Value.GetDatabaseServerInfo(CancellationToken.None).Result;
+        if (getDatabaseServerInfoResult.IsSuccess)
         {
-            return getDatabaseServerInfoResult.AsT0.ServerName ?? string.Empty;
+            return getDatabaseServerInfoResult.Value.ServerName ?? string.Empty;
         }
 
         return string.Empty;

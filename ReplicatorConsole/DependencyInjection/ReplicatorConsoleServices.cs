@@ -29,7 +29,7 @@ public static class ReplicatorConsoleServices
             .AddSingleton<IMenuBuilder, ReplicatorConsoleMenuBuilder>()
             .AddTransientAllStrategies<IMenuCommandFactoryStrategy>(
                 typeof(ParametersEditorListCliMenuCommandFactoryStrategy).Assembly)
-            .AddApplication(x =>
+            .AddApp(x =>
             {
                 x.AppName = appName;
             })

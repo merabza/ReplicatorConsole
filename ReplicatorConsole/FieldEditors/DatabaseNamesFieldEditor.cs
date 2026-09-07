@@ -14,6 +14,7 @@ using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibParameters;
 using ReplicatorShared.Data;
 using ReplicatorShared.Data.Models;
+using SystemTools.SharedKernel;
 using SystemTools.SystemToolsShared;
 using SystemTools.SystemToolsShared.Errors;
 using ToolsManagement.DatabasesManagement;
@@ -60,14 +61,14 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
         List<DatabaseInfoModel> dbList;
 
-        OneOf<IDatabaseManager, ErrorOmd[]> createDatabaseManagerResult =
+        Result<IDatabaseManager> createDatabaseManagerResult =
             await DatabaseManagersFactory.CreateDatabaseManager(_appName, _logger, true, databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections), null, _httpClientFactory, null,
                 null, cancellationToken);
 
-        if (createDatabaseManagerResult.IsT1)
+        if (createDatabaseManagerResult.IsFailure)
         {
-            ErrorOmd.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+            createDatabaseManagerResult.Error.PrintErrorsOnConsole();
             StShared.WriteErrorLine(
                 $"DatabaseManagementClient does not created for database Server Connection {databaseServerConnectionName}",
                 true, _logger);
@@ -76,7 +77,7 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         else
         {
             var databasesListCreator =
-                new DatabasesListCreator(databaseSet, createDatabaseManagerResult.AsT0, backupType);
+                new DatabasesListCreator(databaseSet, createDatabaseManagerResult.Value, backupType);
             dbList = await databasesListCreator.LoadDatabaseNames(cancellationToken);
         }
 

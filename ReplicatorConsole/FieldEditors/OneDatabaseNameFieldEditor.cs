@@ -15,6 +15,7 @@ using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibParameters;
 using ReplicatorShared.Data;
 using ReplicatorShared.Data.Models;
+using SystemTools.SharedKernel;
 using SystemTools.SystemToolsShared;
 using SystemTools.SystemToolsShared.Errors;
 using ToolsManagement.DatabasesManagement;
@@ -78,12 +79,12 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
             return dbList;
         }
 
-        OneOf<IDatabaseManager, ErrorOmd[]> createDatabaseManagerResult = DatabaseManagersFactory
+        Result<IDatabaseManager> createDatabaseManagerResult = DatabaseManagersFactory
             .CreateDatabaseManager(_appName, _logger, true, databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections), null, _httpClientFactory, null,
                 null, CancellationToken.None).Result;
 
-        if (createDatabaseManagerResult.IsT1)
+        if (createDatabaseManagerResult.IsFailure)
         {
             StShared.WriteErrorLine(
                 $"DatabaseManagementClient does not created for webAgent {databaseServerConnectionName}", true,
@@ -93,7 +94,7 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
         else
         {
             var databasesListCreator = new DatabasesListCreator(EDatabaseSet.AllDatabases,
-                createDatabaseManagerResult.AsT0, EBackupType.Full);
+                createDatabaseManagerResult.Value, EBackupType.Full);
             dbList = databasesListCreator.LoadDatabaseNames(CancellationToken.None).Result;
         }
 

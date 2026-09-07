@@ -8,16 +8,14 @@ using AppCliTools.CliParametersEdit.Counters;
 using AppCliTools.CliParametersEdit.Generators;
 using DatabaseTools.DbTools;
 using DatabaseTools.DbTools.Models;
-using LanguageExt;
 using Microsoft.Extensions.Logging;
-using OneOf;
 using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibParameters;
 using ReplicatorConsole.Counters;
 using ReplicatorShared.Data.Models;
 using ReplicatorShared.Data.Steps;
+using SystemTools.SharedKernel;
 using SystemTools.SystemToolsShared;
-using SystemTools.SystemToolsShared.Errors;
 using ToolsManagement.DatabasesManagement;
 
 namespace ReplicatorConsole.Generators;
@@ -47,18 +45,18 @@ internal sealed class StandardJobsSchemaGenerator
     {
         var parameters = (ReplicatorParameters)_parametersManager.Parameters;
 
-        OneOf<IDatabaseManager, ErrorOmd[]> createDatabaseManagerResult =
+        Result<IDatabaseManager> createDatabaseManagerResult =
             await DatabaseManagersFactory.CreateDatabaseManager(_appName, _logger, true, _databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections), cancellationToken);
 
-        if (createDatabaseManagerResult.IsT1)
+        if (createDatabaseManagerResult.IsFailure)
         {
-            ErrorOmd.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+            createDatabaseManagerResult.Error.PrintErrorsOnConsole();
         }
 
-        IDatabaseManager? dac = createDatabaseManagerResult.AsT0;
-        Option<ErrorOmd[]> testConnectionResult = await dac.TestConnection(null, cancellationToken);
-        if (testConnectionResult.IsSome)
+        IDatabaseManager dac = createDatabaseManagerResult.Value;
+        Result testConnectionResult = await dac.TestConnection(null, cancellationToken);
+        if (testConnectionResult.IsFailure)
         {
             StShared.WriteErrorLine("Can not connect to server. Generation process stopped", true, _logger);
             return;
@@ -92,25 +90,25 @@ internal sealed class StandardJobsSchemaGenerator
         //string archiverRarName = standardArchiversGenerator.ArchiverRarName; //Rar
 
         //1. დადგინდეს SQL სერვერი ლოკალურია თუ მოშორებული.
-        OneOf<bool, ErrorOmd[]> isServerLocalResult = await dac.IsServerLocal(cancellationToken);
+        Result<bool> isServerLocalResult = await dac.IsServerLocal(cancellationToken);
         bool isServerLocal = false;
-        if (isServerLocalResult.IsT0)
+        if (isServerLocalResult.IsSuccess)
         {
-            isServerLocal = isServerLocalResult.AsT0;
+            isServerLocal = isServerLocalResult.Value;
         }
 
         string fullBuFileStorageName = RegisterFileStorage(EBackupType.Full);
         string trLogBuFileStorageName = RegisterFileStorage(EBackupType.TrLog);
 
-        OneOf<DbServerInfo, ErrorOmd[]> getDatabaseServerInfoResult = await dac.GetDatabaseServerInfo(cancellationToken);
-        if (getDatabaseServerInfoResult.IsT1)
+        Result<DbServerInfo> getDatabaseServerInfoResult = await dac.GetDatabaseServerInfo(cancellationToken);
+        if (getDatabaseServerInfoResult.IsFailure)
         {
-            ErrorOmd.PrintErrorsOnConsole(getDatabaseServerInfoResult.AsT1);
+            getDatabaseServerInfoResult.Error.PrintErrorsOnConsole();
             StShared.WriteErrorLine("dbServerInfo does not created. Generation process stopped", true, _logger);
             return;
         }
 
-        DbServerInfo? dbServerInfo = getDatabaseServerInfoResult.AsT0;
+        DbServerInfo dbServerInfo = getDatabaseServerInfoResult.Value;
 
         //დასაშვებია თუ არა სერვერის მხარეს ბექაპირებისას კომპრესია
         bool isServerAllowsCompression = dbServerInfo.AllowsCompression;

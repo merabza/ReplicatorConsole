@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using OneOf;
 using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibParameters;
+using SystemTools.SharedKernel;
+using SystemTools.SystemToolsShared;
 using SystemTools.SystemToolsShared.Errors;
 using ToolsManagement.DatabasesManagement;
 
@@ -43,18 +45,18 @@ public sealed class ProcLineCounter : SCounter
             return false;
         }
 
-        OneOf<IDatabaseManager, ErrorOmd[]> createDatabaseManagerResult = DatabaseManagersFactory
+        Result<IDatabaseManager> createDatabaseManagerResult = DatabaseManagersFactory
             .CreateDatabaseManager(_appName, _logger, true, _databaseServerConnectionName,
                 new DatabaseServerConnections(parametersDsc.DatabaseServerConnections), CancellationToken.None).Result;
 
-        if (createDatabaseManagerResult.IsT1)
+        if (createDatabaseManagerResult.IsFailure)
         {
-            ErrorOmd.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+            createDatabaseManagerResult.Error.PrintErrorsOnConsole();
         }
 
-        OneOf<bool, ErrorOmd[]> isServerLocalResult =
-            createDatabaseManagerResult.AsT0.IsServerLocal(CancellationToken.None).Result;
-        return isServerLocalResult is { IsT0: true, AsT0: true };
+        Result<bool> isServerLocalResult =
+            createDatabaseManagerResult.Value.IsServerLocal(CancellationToken.None).Result;
+        return isServerLocalResult is { IsSuccess: true, Value: true };
     }
 
     public int Count(EProcLineCase procLineCase)
