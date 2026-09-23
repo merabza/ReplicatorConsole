@@ -4,6 +4,7 @@ using AppCliTools.CliParameters;
 using AppCliTools.CliTools;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ReplicatorConsole;
 using ReplicatorConsole.DependencyInjection;
 using ReplicatorShared.Data.Models;
 using Serilog;
@@ -16,15 +17,24 @@ try
 
     const string appName = "Replicator Console";
 
-    var argParser = new ArgumentsParser<ReplicatorParameters>(args, appName);
+    var argumentsAnalyzer = new ArgumentsAnalyzer();
 
-    switch (argParser.Analysis())
+    if (!await argumentsAnalyzer.Analysis(args))
+    {
+        return argumentsAnalyzer.ExitCode;
+    }
+
+    var argParser = new ParametersService<ReplicatorParameters>(appName);
+
+    switch (argParser.Analysis(argumentsAnalyzer.ParametersFileName))
     {
         case EParseResult.Ok:
             break;
-        case EParseResult.Usage:
+        case EParseResult.ShowHelp:
+            argumentsAnalyzer.ShowHelp();
             return 1;
         case EParseResult.ParseError:
+            StShared.WriteErrorLine($"File {argumentsAnalyzer.ParametersFileName} is not valid", true, logger, false);
             return 2;
         default:
             throw new SwitchExpressionException();

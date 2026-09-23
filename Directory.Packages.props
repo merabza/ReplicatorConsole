@@ -5,5 +5,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.34.0.3385" />
+    <PackageVersion Include="System.CommandLine" Version="2.0.12" />
   </ItemGroup>
 </Project>
