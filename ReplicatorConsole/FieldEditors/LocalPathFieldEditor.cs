@@ -32,12 +32,12 @@ public sealed class LocalPathFieldEditor : FieldEditor<string>
         if (_databaseBackupParametersPropertyName != null)
         {
             var databaseBackupParameters =
-                GetValue<DatabaseBackupParametersDomain>(recordForUpdate, _databaseBackupParametersPropertyName);
+                GetValue<DatabaseParameters>(recordForUpdate, _databaseBackupParametersPropertyName);
 
             workFolderCandidateForLocalPath = databaseBackupParameters is null
                 ? null
                 : parameters.CountLocalPath(null, _parametersFileName,
-                    $"Database{databaseBackupParameters.BackupType}Backups");
+                    $"Database{databaseBackupParameters.BackupType ?? DatabaseParameters.DefaultBackupType}Backups");
         }
         else
         {
