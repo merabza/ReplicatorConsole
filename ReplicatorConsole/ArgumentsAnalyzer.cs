@@ -13,15 +13,9 @@ public sealed class ArgumentsAnalyzer
 
     public ArgumentsAnalyzer()
     {
-        _useOption = new Option<string?>("--use", "-u")
-        {
-            Description = "File name for use as parameters json."
-        };
+        _useOption = new Option<string?>("--use", "-u") { Description = "File name for use as parameters json." };
 
-        _rootCommand = new RootCommand("CrawlerConsole")
-        {
-            _useOption
-        };
+        _rootCommand = new RootCommand("CrawlerConsole") { _useOption };
     }
 
     public string? ParametersFileName { get; private set; }
@@ -45,7 +39,6 @@ public sealed class ArgumentsAnalyzer
         ParametersFileName = string.IsNullOrWhiteSpace(parametersFileName) ? null : parametersFileName;
 
         return true;
-
     }
 
     //პარამეტრების გამოყენების ინსტრუქციის გამოტანა

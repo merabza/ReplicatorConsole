@@ -15,7 +15,6 @@ using ReplicatorShared.Data;
 using ReplicatorShared.Data.Models;
 using SystemTools.SharedKernel;
 using SystemTools.SystemToolsShared;
-using SystemTools.SystemToolsShared.Errors;
 using ToolsManagement.DatabasesManagement;
 
 namespace ReplicatorConsole.FieldEditors;
@@ -60,10 +59,10 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
         List<DatabaseInfoModel> dbList;
 
-        Result<IDatabaseManager> createDatabaseManagerResult =
-            await DatabaseManagersFactory.CreateDatabaseManager(_appName, _logger, true, databaseServerConnectionName,
-                new DatabaseServerConnections(parameters.DatabaseServerConnections), null, _httpClientFactory, null,
-                null, cancellationToken);
+        Result<IDatabaseManager> createDatabaseManagerResult = await DatabaseManagersFactory.CreateDatabaseManager(
+            _appName, _logger, true, databaseServerConnectionName,
+            new DatabaseServerConnections(parameters.DatabaseServerConnections), null, _httpClientFactory, null, null,
+            cancellationToken);
 
         if (createDatabaseManagerResult.IsFailure)
         {

@@ -4,8 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AppCliTools.CliMenu;
+using AppCliTools.CliParameters.CliMenuCommands;
 using AppCliTools.CliParametersEdit.Counters;
 using AppCliTools.CliParametersEdit.Generators;
+using AppCliTools.LibMenuInput;
 using DatabaseTools.DbTools;
 using DatabaseTools.DbTools.Models;
 using Microsoft.Extensions.Logging;
@@ -52,6 +55,8 @@ internal sealed class StandardJobsSchemaGenerator
         if (createDatabaseManagerResult.IsFailure)
         {
             createDatabaseManagerResult.Error.PrintErrorsOnConsole();
+            StShared.WriteErrorLine("Database manager does not created. Generation process stopped", true, _logger);
+            return;
         }
 
         IDatabaseManager dac = createDatabaseManagerResult.Value;
@@ -97,9 +102,6 @@ internal sealed class StandardJobsSchemaGenerator
             isServerLocal = isServerLocalResult.Value;
         }
 
-        string fullBuFileStorageName = RegisterFileStorage(EBackupType.Full);
-        string trLogBuFileStorageName = RegisterFileStorage(EBackupType.TrLog);
-
         Result<DbServerInfo> getDatabaseServerInfoResult = await dac.GetDatabaseServerInfo(cancellationToken);
         if (getDatabaseServerInfoResult.IsFailure)
         {
@@ -109,6 +111,22 @@ internal sealed class StandardJobsSchemaGenerator
         }
 
         DbServerInfo dbServerInfo = getDatabaseServerInfoResult.Value;
+
+        //ბექაპები სერვერის მხარეს შეიქმნება ფოლდერების ნაკრების Backup ფოლდერში
+        (string Name, string BackupFolder)? dbServerFoldersSet = SelectDbServerFoldersSet(dbServerInfo);
+        if (dbServerFoldersSet is null)
+        {
+            StShared.WriteErrorLine(
+                "Database server folders set with Backup folder is not specified. Generation process stopped", true,
+                _logger);
+            return;
+        }
+
+        (string dbServerFoldersSetName, string dbServerBackupFolder) = dbServerFoldersSet.Value;
+
+        //ლოკალური სერვერის შემთხვევაში ბაზის ფაილსაცავი იმავე Backup ფოლდერზე უნდა უთითებდეს,
+        //რომ ახლადშექმნილი ბექაპი იქიდან ჩამოიტვირთოს და იქვე წაიშალოს ზედმეტი ფაილები
+        string? databaseFileStorageName = isServerLocal ? RegisterFileStorage(dbServerBackupFolder) : null;
 
         //დასაშვებია თუ არა სერვერის მხარეს ბექაპირებისას კომპრესია
         bool isServerAllowsCompression = dbServerInfo.AllowsCompression;
@@ -136,7 +154,7 @@ internal sealed class StandardJobsSchemaGenerator
         //ბაზების სრული ბექაპი
         CreateBackupStep(EBackupType.Full, isServerAllowsCompression, true, stepNamePrefix, dateMask,
             StandardSmartSchemas.DailyStandardSmartSchemaName, StandardSmartSchemas.ReduceSmartSchemaName,
-            isServerLocal ? fullBuFileStorageName : null, databaseFullBackupsLocalPath,
+            dbServerFoldersSetName, databaseFileStorageName, databaseFullBackupsLocalPath,
             isServerAllowsCompression ? null : nameof(EArchiveType.ZipClass), uploadFileStorageName, scheduleDailyName,
             scheduleAtStartName, parameters);
 
@@ -153,7 +171,7 @@ internal sealed class StandardJobsSchemaGenerator
         //ტრანზაქშენ ლოგების ბექაპი, საათობრივად, მხოლოდ იმ ბაზებისათვის, რომელთათვისაც დასაშვებია ტრანზაქშენ ლოგებით ბექაპი
         CreateBackupStep(EBackupType.TrLog, false, false, stepNamePrefix, dateMask,
             StandardSmartSchemas.HourlySmartSchemaName, StandardSmartSchemas.HourlySmartSchemaName,
-            isServerLocal ? trLogBuFileStorageName : null, databaseTrLogBackupsLocalPath, null, uploadFileStorageName,
+            dbServerFoldersSetName, databaseFileStorageName, databaseTrLogBackupsLocalPath, null, uploadFileStorageName,
             scheduleHourlyName, scheduleAtStartName, parameters);
 
         //8.1. პროცედურების გადაკომპილირება, 
@@ -169,25 +187,66 @@ internal sealed class StandardJobsSchemaGenerator
             scheduleAtStartName, parameters);
     }
 
-    private string RegisterFileStorage(EBackupType backupType)
+    //თუ კავშირს ფოლდერების ნაკრები არ აქვს, შეიქმნება Default სერვერის ნაგულისხმევი ფოლდერებით.
+    //ბექაპებისთვის გამოდგება მხოლოდ ნაკრები, რომელსაც Backup ფოლდერი აქვს. თუ ასეთი რამდენიმეა, ირჩევს მომხმარებელი
+    //internal საჭიროა ტესტებისთვის
+    internal (string Name, string BackupFolder)? SelectDbServerFoldersSet(DbServerInfo dbServerInfo)
+    {
+        var parameters = (ReplicatorParameters)_parametersManager.Parameters;
+        DatabaseServerConnectionData databaseServerConnection =
+            parameters.DatabaseServerConnections[_databaseServerConnectionName];
+
+        if (databaseServerConnection.DatabaseFoldersSets is null or { Count: 0 })
+        {
+            databaseServerConnection.SetDefaultFolders(dbServerInfo);
+        }
+
+        List<(string Name, string BackupFolder)> foldersSets =
+        [
+            .. (databaseServerConnection.DatabaseFoldersSets ?? [])
+            .Where(w => !string.IsNullOrWhiteSpace(w.Value.Backup)).Select(s => (s.Key, s.Value.Backup ?? string.Empty))
+        ];
+
+        if (foldersSets.Count <= 1)
+        {
+            return foldersSets.Count == 1 ? foldersSets[0] : null;
+        }
+
+        var foldersSetsMenuSet = new CliMenuSet();
+        foreach ((string name, string backupFolder) in foldersSets)
+        {
+            foldersSetsMenuSet.AddMenuItem(new MenuCommandWithStatusCliMenuCommand(name, backupFolder));
+        }
+
+        int selectedId = MenuInputer.InputIdFromMenuList("Database server folders set", foldersSetsMenuSet);
+        return selectedId >= 0 && selectedId < foldersSets.Count ? foldersSets[selectedId] : null;
+    }
+
+    //აბრუნებს ფაილსაცავის სახელს, რომელიც მითითებულ ფოლდერზე უთითებს. თუ ასეთი არ არსებობს, ქმნის ახალს
+    //internal საჭიროა ტესტებისთვის
+    internal string RegisterFileStorage(string folderPath)
     {
         var parameters = (ReplicatorParameters)_parametersManager.Parameters;
 
-        var fileStorageGenerator = new FileStorageGenerator(_parametersManager);
+        string normalizedFolderPath = FileStat.NormalizePath(folderPath);
+        string? existingFileStorageName = parameters.FileStorages
+            .Where(w => w.Value.FileStoragePath is not null && FileStat.IsFileSchema(w.Value.FileStoragePath) &&
+                        FileStat.NormalizePath(w.Value.FileStoragePath) == normalizedFolderPath).Select(s => s.Key)
+            .FirstOrDefault();
 
-        string? fullPath = parameters.CountLocalPath(null, _parametersFileName, $"Database{backupType}Backups");
-
-        if (string.IsNullOrWhiteSpace(fullPath))
+        if (existingFileStorageName is not null)
         {
-            throw new Exception("fullPath does not counted");
+            return existingFileStorageName;
         }
 
-        var dir = new DirectoryInfo(fullPath);
-        fileStorageGenerator.GenerateForLocalPath(dir.Name, fullPath);
-        return dir.Name;
+        string fileStorageName = CreateNewName([new DirectoryInfo(folderPath).Name], [.. parameters.FileStorages.Keys]);
+        var fileStorageGenerator = new FileStorageGenerator(_parametersManager);
+        fileStorageGenerator.GenerateForLocalPath(fileStorageName, folderPath);
+        return fileStorageName;
     }
 
-    private static void CreateScheduleByJobStep(string jobStepName, string scheduleName,
+    //internal საჭიროა ტესტებისთვის
+    internal static void CreateScheduleByJobStep(string jobStepName, string scheduleName,
         ReplicatorParameters parameters)
     {
         if (parameters.JobsBySchedules.Any(a => a.JobStepName == jobStepName && a.ScheduleName == scheduleName))
@@ -201,7 +260,8 @@ internal sealed class StandardJobsSchemaGenerator
         parameters.JobsBySchedules.Add(new JobStepBySchedule(jobStepName, scheduleName, nextSequentialNumber));
     }
 
-    private void CreateMaintenanceStep(EMultiDatabaseActionType multiDatabaseActionType, string stepNamePrefix,
+    //internal საჭიროა ტესტებისთვის
+    internal void CreateMaintenanceStep(EMultiDatabaseActionType multiDatabaseActionType, string stepNamePrefix,
         string scheduleNameFirst, string scheduleNameSecond, ReplicatorParameters parameters)
     {
         string stepName = $"{stepNamePrefix} - {multiDatabaseActionType} for all databases";
@@ -236,10 +296,11 @@ internal sealed class StandardJobsSchemaGenerator
         CreateScheduleByJobStep(stepName, scheduleNameSecond, parameters);
     }
 
-    private void CreateBackupStep(EBackupType backupType, bool useCompression, bool useVerification,
+    //internal საჭიროა ტესტებისთვის
+    internal void CreateBackupStep(EBackupType backupType, bool useCompression, bool useVerification,
         string stepNamePrefix, string dateMask, string mainSmartSchemaName, string reduceSmartSchemaName,
-        string? databaseFileStorageName, string? databaseBackupsLocalPath, string? archiverName,
-        string? uploadFileStorageName, string scheduleNameFirst, string scheduleNameSecond,
+        string dbServerFoldersSetName, string? databaseFileStorageName, string? databaseBackupsLocalPath,
+        string? archiverName, string? uploadFileStorageName, string scheduleNameFirst, string scheduleNameSecond,
         ReplicatorParameters parameters)
     {
         string backupStepName = $"{stepNamePrefix} {backupType} Backup";
@@ -275,9 +336,11 @@ internal sealed class StandardJobsSchemaGenerator
             //DbServerSideBackupPath = databaseBackupsLocalPath,
 
             //ბაზის სერვერის მხარე
-            SmartSchemaName = smartSchemaNameCounter.Count(ESmartSchemaCase.DatabaseServerSide, mainSmartSchemaName,
-                reduceSmartSchemaName),
+            SmartSchemaName =
+                smartSchemaNameCounter.Count(ESmartSchemaCase.DatabaseServerSide, mainSmartSchemaName,
+                    reduceSmartSchemaName),
             FileStorageName = databaseFileStorageName,
+            DbServerFoldersSetName = dbServerFoldersSetName,
             //ჩამოტვირთვა და ლოკალური მხარე
             DownloadProcLineId = procLineCounter.Count(EProcLineCase.Download),
             LocalPath = databaseBackupsLocalPath, //ლოკალური ფოლდერი ბაზების ბექაპების შესანახად
@@ -309,7 +372,8 @@ internal sealed class StandardJobsSchemaGenerator
         CreateScheduleByJobStep(backupStepName, scheduleNameSecond, parameters);
     }
 
-    private static string CreateJobScheduleHourly(ReplicatorParameters parameters)
+    //internal საჭიროა ტესტებისთვის
+    internal static string CreateJobScheduleHourly(ReplicatorParameters parameters)
     {
         List<KeyValuePair<string, JobSchedule>> jsdKvp =
         [
@@ -344,7 +408,8 @@ internal sealed class StandardJobsSchemaGenerator
         return name;
     }
 
-    private static string CreateJobScheduleDaily(ReplicatorParameters parameters)
+    //internal საჭიროა ტესტებისთვის
+    internal static string CreateJobScheduleDaily(ReplicatorParameters parameters)
     {
         List<KeyValuePair<string, JobSchedule>> jsdKvp =
         [
@@ -376,7 +441,8 @@ internal sealed class StandardJobsSchemaGenerator
         return name;
     }
 
-    private static string CreateJobScheduleAtStart(ReplicatorParameters parameters)
+    //internal საჭიროა ტესტებისთვის
+    internal static string CreateJobScheduleAtStart(ReplicatorParameters parameters)
     {
         const string atStartName = "AtStart";
         List<KeyValuePair<string, JobSchedule>> jsdKvp =
@@ -398,13 +464,14 @@ internal sealed class StandardJobsSchemaGenerator
             //JobStepNames = new List<string>()
         };
 
-        parameters.JobSchedules.Add(CreateNewName([atStartName], [.. parameters.JobSchedules.Keys]),
-            jobScheduleAtStart);
+        string name = CreateNewName([atStartName], [.. parameters.JobSchedules.Keys]);
+        parameters.JobSchedules.Add(name, jobScheduleAtStart);
 
-        return atStartName;
+        return name;
     }
 
-    private static string CreateNewName(string[] templates, List<string> reservedNames)
+    //internal საჭიროა ტესტებისთვის
+    internal static string CreateNewName(string[] templates, List<string> reservedNames)
     {
         int ver = 1;
         while (true)

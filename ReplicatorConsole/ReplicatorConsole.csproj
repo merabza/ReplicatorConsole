@@ -20,4 +20,8 @@
     <ProjectReference Include="..\..\SystemTools\SystemTools.SerilogStuff\SystemTools.SerilogStuff.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="ReplicatorConsole.Tests" />
+  </ItemGroup>
+
 </Project>

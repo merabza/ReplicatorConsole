@@ -45,6 +45,9 @@
     <Project Path="../SystemTools/SystemTools.SystemToolsShared/SystemTools.SystemToolsShared.csproj" />
     <Project Path="../SystemTools/SystemTools.TestApiContracts/SystemTools.TestApiContracts.csproj" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="ReplicatorConsole.Tests/ReplicatorConsole.Tests.csproj" />
+  </Folder>
   <Folder Name="/ToolsManagement/">
     <Project Path="../ToolsManagement/ToolsManagement.ApiClientsManagement/ToolsManagement.ApiClientsManagement.csproj" />
     <Project Path="../ToolsManagement/ToolsManagement.CompressionManagement/ToolsManagement.CompressionManagement.csproj" />

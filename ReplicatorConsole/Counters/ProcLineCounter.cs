@@ -5,7 +5,6 @@ using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibParameters;
 using SystemTools.SharedKernel;
 using SystemTools.SystemToolsShared;
-using SystemTools.SystemToolsShared.Errors;
 using ToolsManagement.DatabasesManagement;
 
 namespace ReplicatorConsole.Counters;
@@ -44,9 +43,9 @@ public sealed class ProcLineCounter : SCounter
             return false;
         }
 
-        Result<IDatabaseManager> createDatabaseManagerResult = DatabaseManagersFactory
-            .CreateDatabaseManager(_appName, _logger, true, _databaseServerConnectionName,
-                new DatabaseServerConnections(parametersDsc.DatabaseServerConnections), CancellationToken.None).Result;
+        Result<IDatabaseManager> createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_appName,
+            _logger, true, _databaseServerConnectionName,
+            new DatabaseServerConnections(parametersDsc.DatabaseServerConnections), CancellationToken.None).Result;
 
         if (createDatabaseManagerResult.IsFailure)
         {

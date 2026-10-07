@@ -20,7 +20,7 @@ public sealed class ExecuteSqlCommandStepCruder : StepCruder<ExecuteSqlCommandSt
         httpClientFactory, processes, parametersManager, currentValuesDictionary, "Execute SQL Command Step",
         "Execute SQL Command Steps")
     {
-        List<FieldEditor> tempFieldEditors = [..FieldEditors];
+        List<FieldEditor> tempFieldEditors = [.. FieldEditors];
 
         FieldEditors.Clear();
 
