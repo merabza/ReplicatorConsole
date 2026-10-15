@@ -635,7 +635,7 @@ public sealed class StandardJobsSchemaGeneratorTests
         _logger.Verify(
             l => l.Log(LogLevel.Error, It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((state, _) =>
-                    state.ToString() == "Can not connect to server. Generation process stopped"),
+                    state!.ToString() == "Can not connect to server. Generation process stopped"),
                 It.IsAny<Exception?>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Once);
     }
 
