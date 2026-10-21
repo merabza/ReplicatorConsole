@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ReplicatorShared.Data" />
     <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="SystemTools.SerilogStuff" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,8 +18,6 @@
     <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParametersDataEdit\AppCliTools.CliParametersDataEdit.csproj" />
     <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParametersExcludeSetsEdit\AppCliTools.CliParametersExcludeSetsEdit.csproj" />
     <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliTools\AppCliTools.CliTools.csproj" />
-    <ProjectReference Include="..\..\ReplicatorShared\ReplicatorShared.Data\ReplicatorShared.Data.csproj" />
-    <ProjectReference Include="..\..\SystemTools\SystemTools.SerilogStuff\SystemTools.SerilogStuff.csproj" />
   </ItemGroup>
 
   <ItemGroup>
