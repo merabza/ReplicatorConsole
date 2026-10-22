@@ -4,12 +4,16 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="ReplicatorShared.Data" Version="1.0.9790.33689" />
+    <PackageVersion Include="AppCliTools.CliParameters" Version="1.0.9791.21162" />
+    <PackageVersion Include="AppCliTools.CliParametersDataEdit" Version="1.0.9791.21162" />
+    <PackageVersion Include="AppCliTools.CliParametersExcludeSetsEdit" Version="1.0.9791.21162" />
+    <PackageVersion Include="AppCliTools.CliTools" Version="1.0.9791.21162" />
+    <PackageVersion Include="ReplicatorShared.Data" Version="1.0.9791.21114" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.35.0.4138" />
     <PackageVersion Include="System.CommandLine" Version="2.0.13" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <PackageVersion Include="Moq" Version="4.21.0" />
-    <PackageVersion Include="SystemTools.SerilogStuff" Version="1.0.9790.33334" />
+    <PackageVersion Include="SystemTools.SerilogStuff" Version="1.0.9791.20931" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
   </ItemGroup>
