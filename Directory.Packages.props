@@ -4,11 +4,11 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="AppCliTools.CliParameters" Version="1.0.9808.33666" />
-    <PackageVersion Include="AppCliTools.CliParametersDataEdit" Version="1.0.9808.33666" />
-    <PackageVersion Include="AppCliTools.CliParametersExcludeSetsEdit" Version="1.0.9808.33666" />
-    <PackageVersion Include="AppCliTools.CliTools" Version="1.0.9808.33666" />
-    <PackageVersion Include="ReplicatorShared.Data" Version="1.0.9808.33566" />
+    <PackageVersion Include="AppCliTools.CliParameters" Version="1.0.9808.42869" />
+    <PackageVersion Include="AppCliTools.CliParametersDataEdit" Version="1.0.9808.42869" />
+    <PackageVersion Include="AppCliTools.CliParametersExcludeSetsEdit" Version="1.0.9808.42869" />
+    <PackageVersion Include="AppCliTools.CliTools" Version="1.0.9808.42869" />
+    <PackageVersion Include="ReplicatorShared.Data" Version="1.0.9808.42771" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.35.0.4138" />
     <PackageVersion Include="System.CommandLine" Version="2.0.14" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
